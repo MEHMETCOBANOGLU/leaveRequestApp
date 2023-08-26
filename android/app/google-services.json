@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "89084506071",
+    "project_id": "enelsisapp",
+    "storage_bucket": "enelsisapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89084506071:android:0061b3c527151546122592",
+        "android_client_info": {
+          "package_name": "com.example.enelsis_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "89084506071-jekv94aoabpv7pq2u57bhp6vu9qdfs87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmx6Fx44b_fntlkIt89ramvUocnC2MBnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "89084506071-jekv94aoabpv7pq2u57bhp6vu9qdfs87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
