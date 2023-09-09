@@ -1,23 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/tema.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ActivationForm extends StatefulWidget {
-  const ActivationForm({super.key});
+  final String? userId;
+  ActivationForm(this.userId, {super.key});
 
   @override
   State<ActivationForm> createState() => _ActivationFormState();
 }
 
 class _ActivationFormState extends State<ActivationForm> {
+  void saveActivationDataToFirestore(String nickName, String password) async {
+    try {
+      DocumentReference userDocumentRef =
+          FirebaseFirestore.instance.collection('users').doc(widget.userId);
+
+      await userDocumentRef.update({
+        'password': password,
+      });
+
+      DocumentSnapshot userSnapshot = await userDocumentRef.get();
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic> existingData =
+            userSnapshot.data() as Map<String, dynamic>;
+        existingData['username'] = nickName;
+
+        await userDocumentRef.set(existingData);
+      }
+
+      print('Veriler başarıyla Firestore\'a kaydedildi.');
+    } catch (e) {
+      print('Hata: $e');
+    }
+  }
+
+  ///
+
+/////////////////
   Tema tema = Tema();
   bool sifre_gozukme = false;
 
-  late String user, email, password, name, department;
+  late String user, email, password, name, department, nickName;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
@@ -33,13 +61,10 @@ class _ActivationFormState extends State<ActivationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final String userIdd = ModalRoute.of(context)!.settings.arguments as String;
-
     return SafeArea(
       child: Scaffold(
         body: Container(
           width: MediaQuery.of(context).size.width,
-          // width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           padding: EdgeInsets.all(16), // ekran boyutunu ayarlamada cozebildim
           decoration: BoxDecoration(color: renk(arka_renk)),
@@ -58,7 +83,7 @@ class _ActivationFormState extends State<ActivationForm> {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5),
-                  child: Text("Kullanıcı Aktivasyon",
+                  child: Text('Kullanıcı Aktivasyon ${widget.userId}',
                       style: GoogleFonts.bebasNeue(
                         color: renk("224ABE"),
                         fontSize: 30,
@@ -76,9 +101,10 @@ class _ActivationFormState extends State<ActivationForm> {
                       if (value!.isEmpty) {
                         return "bilgileri eksiksiz doldurunuz";
                       } else {}
+                      return null;
                     },
                     onSaved: (value) {
-                      name = value!;
+                      nickName = value!;
                     },
                     decoration: tema.inputDec(
                         "kullanıcı-adı giriniz",
@@ -104,6 +130,7 @@ class _ActivationFormState extends State<ActivationForm> {
                             if (value!.isEmpty) {
                               return "bilgileri eksiksiz doldurunuz";
                             } else {}
+                            return null;
                           },
                           onSaved: (value) {
                             password = value!;
@@ -195,10 +222,9 @@ class _ActivationFormState extends State<ActivationForm> {
                         try {
                           var UserResult =
                               await firebaseAuth.createUserWithEmailAndPassword(
-                            email: email,
+                            email: "$nickName@example.com",
                             password: password,
                           );
-
                           formkey.currentState!.reset();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -206,19 +232,14 @@ class _ActivationFormState extends State<ActivationForm> {
                                   "Kayıt yapıldı, giriş sayfasına yönlendiriliyorsunuz"),
                             ),
                           );
+
+                          Navigator.pushReplacementNamed(context, "/");
                           print(UserResult.user!.uid);
                           print(UserResult.user!.email);
-
-                          Navigator.pushReplacementNamed(context, "/loginPage");
-
-                          // saveActivationDataToFirestore(
-                          //   UserResult.user!.uid,
-                          //   email,
-                          //   password,
-                          //   name,
-                          //   department,
-                          //   rool,
-                          // );
+                          saveActivationDataToFirestore(
+                            nickName,
+                            password,
+                          );
                         } catch (e) {
                           print(e.toString());
                         }
@@ -240,9 +261,9 @@ class _ActivationFormState extends State<ActivationForm> {
                 Container(
                   child: Center(
                     child: TextButton(
-                      onPressed: () =>
-                          //Navigator.pushNamed(context, "/usersActivation"),
-                          print(userIdd),
+                      onPressed: () => Navigator.pushReplacementNamed(
+                          context, "/aktivationLogin"),
+                      //print(widget.userId),
                       child: Text(
                         "Bir önceki sayfaya geri dön",
                       ),
@@ -258,15 +279,12 @@ class _ActivationFormState extends State<ActivationForm> {
   }
 }
 
-
-// Kullanıcının Firestore'a verilerini kaydetme
+// //Kullanıcının Firestore'a verilerini kaydetme
 // void saveActivationDataToFirestore(String nickName, String password) async {
-
 //   CollectionReference usersCollection = FirebaseFirestore.instance
 //       .collection('users')
-//       .doc(userId) as CollectionReference<Object?>;
-
-//   await usersCollection.doc(userId).set({
+//       .doc(widget.userId) as CollectionReference<Object?>;
+//   await usersCollection.doc(widget.userId).set({
 //     'kullanıcı-Adı': nickName,
 //     'password': password,
 //   });

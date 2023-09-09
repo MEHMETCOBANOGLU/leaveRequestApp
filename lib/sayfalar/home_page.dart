@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../sabitler/tema.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -12,8 +14,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _firestore = FirebaseFirestore.instance;
+  Tema tema = Tema();
+  bool sifre_gozukme = false;
+  bool userIsAdmin = false;
 
+  final _firestore = FirebaseFirestore.instance;
+  final _currentUser = FirebaseAuth.instance.currentUser;
   late String email, password;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
@@ -29,26 +35,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = FirebaseAuth.instance.currentUser;
+    //CollectionReference usersRef = _firestore.collection("users");
 
-    // var mehmetRef = usersRef.doc("mehmet"); //documnetsnap
-    CollectionReference usersRef = _firestore.collection("users");
-    //var response = usersRef.get();
-    //var list = response.docs;
-    // print(mehmetRef);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Çıkış işlemi burada yapılabilir
             Navigator.pop(context); // Geri dön
           },
         ),
         title: StreamBuilder<DocumentSnapshot>(
           stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
+              _firestore.collection('users').doc(_currentUser?.uid).snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
               return Text(
                   'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
             }
-
+            print(_currentUser!.uid);
             final userData =
                 snapshot.data?.data() as Map<String, dynamic>? ?? {};
             final String name = userData['name'] as String? ?? '';
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           FloatingActionButton(
             onPressed: () {
-              // Mesaj gönderme işlemi burada yapılabilir
+              Navigator.pushNamed(context, "/chatDm");
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,

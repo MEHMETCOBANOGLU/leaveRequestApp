@@ -1,14 +1,11 @@
-import 'package:enelsis_app/messaging/chat_page.dart';
-import 'package:enelsis_app/sayfalar/home_page.dart';
+import 'package:enelsis_app/helper/helper_function.dart';
+import 'package:enelsis_app/sabitler/myRouters.dart';
+import 'package:enelsis_app/service/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'sabitler/activationForm.dart';
-import 'sayfalar/admin_page.dart';
-import 'sayfalar/izinler_page.dart';
-import 'sayfalar/oturum/giris.dart';
+import 'package:provider/provider.dart';
+import 'core/services/auth_service2.dart';
 import 'firebase_options.dart';
-import 'sayfalar/sign_up.dart';
-import 'sayfalar/usersActivation_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,31 +16,54 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  bool _isSignedIn = false;
+  @override
+  void initState() {
+    super.initState();
+    getUserLoggedInStatus();
+  }
+
+  getUserLoggedInStatus() async {
+    await HelperFunctions.getUserLoggedInStatus().then((value) {
+      if (value != null) {
+        setState(() {
+          _isSignedIn = value;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      routes: {
-        "/loginPage": (context) => GirisSayfasi(),
-        "/signUp": (context) => SignUp(),
-        "/homePage": (context) => HomePage(),
-        "/izinlerSayfasi": (context) => IzinlerSayfasi(),
-        "/adminPage": (context) => adminPage(),
-        "/chatPage": (context) => ChatScreen(),
-        "/usersActivation": (context) => UsersActivation(),
-        "/activationForm": (context) => ActivationForm(),
-      },
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        body: GirisSayfasi(),
+    return MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) =>
+              AuthService(), //          create: (_) => AuthService(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+          create: (context) => context.read<AuthService>().authStateChanges,
+          initialData: null,
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: MyRoutes.genrateRoute,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        initialRoute: _isSignedIn ? '/adminPage' : "/", //conversationPagechatDm
       ),
     );
   }

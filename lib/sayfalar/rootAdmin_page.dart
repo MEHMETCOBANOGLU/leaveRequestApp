@@ -4,14 +4,14 @@ import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class UsersActivation extends StatefulWidget {
-  const UsersActivation({super.key});
+class RootAdminPage extends StatefulWidget {
+  const RootAdminPage({super.key});
 
   @override
-  State<UsersActivation> createState() => _UsersActivationState();
+  State<RootAdminPage> createState() => _RootAdminPageState();
 }
 
-class _UsersActivationState extends State<UsersActivation> {
+class _RootAdminPageState extends State<RootAdminPage> {
   final _firestore = FirebaseFirestore.instance;
 
   late String email, password;
@@ -28,37 +28,14 @@ class _UsersActivationState extends State<UsersActivation> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Çıkış işlemi burada yapılabilir
-            Navigator.pop(context); // Geri dön
+            Navigator.pop(context);
           },
         ),
-        title: StreamBuilder<DocumentSnapshot>(
-          stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-
-            if (snapshot.hasError) {
-              return Text(
-                  'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-            }
-
-            final userData =
-                snapshot.data?.data() as Map<String, dynamic>? ?? {};
-            final String name = userData['name'] as String? ?? '';
-            final String department = userData['department'] as String? ?? '';
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: TextStyle(fontSize: 18)),
-                Text(department, style: TextStyle(fontSize: 14)),
-              ],
-            );
-          },
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("ROOT ADMİN AKTİVASYON", style: TextStyle(fontSize: 18)),
+          ],
         ),
         actions: [
           Container(
@@ -92,7 +69,7 @@ class _UsersActivationState extends State<UsersActivation> {
                     (userSnapshot.data() as Map<String, dynamic>)
                         .containsKey("username")) {
                   String username = userSnapshot["username"] as String;
-                  if (username.isEmpty) {
+                  if (username.isEmpty && rool == "üye") {
                     return Container(); // Username is empty, don't show card
                   } else {
                     return Container(); // Username is not empty, don't show card
@@ -116,38 +93,6 @@ class _UsersActivationState extends State<UsersActivation> {
             );
           }
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.add_task_outlined),
-              onPressed: () {
-                Navigator.pushNamed(context, '/adminPage');
-              },
-            ),
-            label: 'İzinler',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.person_add_alt_1),
-              onPressed: () {
-                Navigator.pushNamed(context, '/usersActivation');
-              },
-            ),
-            label: 'Kullanıcı Aktivasyon',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.message),
-              onPressed: () {
-                Navigator.pushNamed(context, '/chatDm');
-              },
-            ),
-            label: 'Mesaj ',
-          ),
-        ],
-        // selectedItemColor: Colors.blue,
       ),
     );
   }
