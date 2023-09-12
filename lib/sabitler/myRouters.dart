@@ -1,11 +1,12 @@
 import 'package:enelsis_app/sayfalar/group_page.dart';
 import 'package:enelsis_app/sayfalar/home_page.dart';
+import 'package:enelsis_app/sayfalar/leave_page.dart';
 import 'package:enelsis_app/sayfalar/profile_page.dart';
 import 'package:enelsis_app/sayfalar/rootAdmin_Login.dart';
 import 'package:flutter/material.dart';
 import '../sayfalar/admin_page.dart';
 import '../sayfalar/aktivationLogin.dart';
-import '../sayfalar/izinler_page.dart';
+import '../sayfalar/usersLeaveRequest_page.dart';
 import '../sayfalar/rootAdmin_page.dart';
 import '../sayfalar/sign_up.dart';
 import '../sayfalar/usersActivation_page.dart';
@@ -27,14 +28,16 @@ class MyRoutes {
       case '/rootAdminPage':
         return MaterialPageRoute(builder: (context) => RootAdminPage());
 
-      case '/izinlerSayfasi':
-        return MaterialPageRoute(builder: (context) => IzinlerSayfasi());
+      case '/usersLeaveRequest':
+        return MaterialPageRoute(builder: (context) => UsersLeaveRequest());
 
       case '/adminPage':
         return MaterialPageRoute(builder: (context) => adminPage());
       case '/groupPage':
         return MaterialPageRoute(builder: (context) => GroupPage());
 
+      case '/leavePage':
+        return MaterialPageRoute(builder: (context) => LeavePage());
       // case '/chatPage':
       //   var d2 = setting.arguments as String;
       //   return MaterialPageRoute(builder: (context) => ChatScreen(d2));
@@ -52,6 +55,9 @@ class MyRoutes {
       case '/activationForm':
         var d = setting.arguments as String;
         return MaterialPageRoute(builder: (context) => ActivationForm(d));
+
+      case '/rootAdminPage':
+        return MaterialPageRoute(builder: (context) => RootAdminPage());
 
       // case '/aktivationLogin':
       //   return MaterialPageRoute(builder: (context) => AktivationLogin());

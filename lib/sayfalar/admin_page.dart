@@ -5,6 +5,8 @@ import 'package:enelsis_app/sayfalar/aktivationLogin.dart';
 import 'package:enelsis_app/sayfalar/group_page.dart';
 import 'package:enelsis_app/sayfalar/profile_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
+import 'package:enelsis_app/service/database_service.dart';
+import 'package:enelsis_app/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +24,8 @@ class _adminPageState extends State<adminPage> {
   String username = "";
   String email = "";
   String department = "";
+  bool _isLoading = false;
+  String groupName = "";
 
   late String password;
   final formkey = GlobalKey<FormState>();
@@ -138,15 +142,52 @@ class _adminPageState extends State<adminPage> {
           ),
           ListTile(
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/groupPage');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                    username: username,
+                    email: email,
+                    department: department,
+                  ),
+                ),
+              );
             },
             selectedColor: Theme.of(context).primaryColor,
             selected: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
+            leading: const Icon(Icons.person),
             title: const Text(
-              "Grup",
+              "Profil",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/usersActivation');
+            },
+            selectedColor: Theme.of(context).primaryColor,
+            selected: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: const Icon(Icons.person_add_alt_1_rounded),
+            title: const Text(
+              "Kullanıcı aktivasyon",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/leavePage');
+            },
+            selectedColor: Theme.of(context).primaryColor,
+            selected: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: const Icon(Icons.add_task_sharp),
+            title: const Text(
+              "İzinler",
               style: TextStyle(color: Colors.black),
             ),
           ),
@@ -164,29 +205,29 @@ class _adminPageState extends State<adminPage> {
           ),
           ListTile(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                    username: username,
-                    email: email,
-                    department: department,
-                  ),
-                ),
-              );
-
-              // nextScreenReplace(
-              //     context,
-              //     ProfilePage(
-              //       userName: userName,
-              //       email: email,
-              //     ));
+              //Navigator.pushReplacementNamed(context, '/izinlerSayfasi');
             },
+            selectedColor: Theme.of(context).primaryColor,
+            selected: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: const Icon(Icons.group),
             title: const Text(
-              "Profil",
+              "Mesaj",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/groupPage');
+            },
+            selectedColor: Theme.of(context).primaryColor,
+            selected: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: const Icon(Icons.group),
+            title: const Text(
+              "Sohbet Grupları",
               style: TextStyle(color: Colors.black),
             ),
           ),
@@ -239,143 +280,9 @@ class _adminPageState extends State<adminPage> {
         ],
       )),
 
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('users').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return CircularProgressIndicator();
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot userSnapshot = snapshot.data!.docs[index];
-
-                return StreamBuilder<QuerySnapshot>(
-                  stream: userSnapshot.reference
-                      .collection('leaveRequests')
-                      .snapshots(),
-                  builder: (context, leaveSnapshot) {
-                    if (!leaveSnapshot.hasData) {
-                      return CircularProgressIndicator();
-                    }
-
-                    return Column(
-                      children: leaveSnapshot.data!.docs.map((leaveDoc) {
-                        String izinTipi = leaveDoc["izinTipi"] as String? ?? "";
-                        String izinGunSayisi =
-                            leaveDoc["izinGunSayisi"] as String? ?? "";
-                        Timestamp selectedBaslangicTarihi =
-                            leaveDoc["baslangicTarihi"] as Timestamp? ??
-                                Timestamp.now();
-                        Timestamp selectedBitisTarihi =
-                            leaveDoc["bitisTarihi"] as Timestamp? ??
-                                Timestamp.now();
-                        String izinAlmaNedeni =
-                            leaveDoc["izinAlmaNedeni"] as String? ?? "";
-                        String onay = leaveDoc["onay"] as String? ?? "";
-
-                        String name = userSnapshot["name"] as String? ?? "";
-
-                        return LeaveCard(
-                          izinTipi: izinTipi,
-                          izinGunSayisi: izinGunSayisi,
-                          selectedBaslangicTarihi: selectedBaslangicTarihi,
-                          selectedBitisTarihi: selectedBitisTarihi,
-                          izinAlmaNedeni: izinAlmaNedeni,
-                          onay: onay,
-                          name: name,
-                          department:
-                              userSnapshot["department"] as String? ?? "",
-                          onApprove: () {
-                            setState(() async {
-                              onay = "ONAYLANDI";
-                              print(onay);
-
-                              // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
-                              CollectionReference leaveRequestsCollection =
-                                  userSnapshot.reference
-                                      .collection('leaveRequests');
-
-                              // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
-                              QuerySnapshot querySnapshot =
-                                  await leaveRequestsCollection.get();
-
-                              // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
-                              for (QueryDocumentSnapshot leaveDoc
-                                  in querySnapshot.docs) {
-                                leaveDoc.reference.update({
-                                  'onay': onay,
-                                }).then((_) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellendi.');
-                                }).catchError((error) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
-                                });
-                              }
-                            });
-                          },
-                          onReject: () {
-                            setState(() async {
-                              onay = "REDDEDİLDİ";
-                              print(onay);
-                              // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
-                              CollectionReference leaveRequestsCollection =
-                                  userSnapshot.reference
-                                      .collection('leaveRequests');
-
-                              // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
-                              QuerySnapshot querySnapshot =
-                                  await leaveRequestsCollection.get();
-
-                              // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
-                              for (QueryDocumentSnapshot leaveDoc
-                                  in querySnapshot.docs) {
-                                leaveDoc.reference.update({
-                                  'onay': onay,
-                                }).then((_) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellendi.');
-                                }).catchError((error) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
-                                });
-                              }
-                            });
-                          },
-                          onMessage: () {
-                            print(userSnapshot.id);
-                            final userid = userSnapshot.id;
-                            Navigator.pushReplacementNamed(
-                              context,
-                              "/chatPage",
-                              arguments: userid,
-                            );
-                          },
-                          onDelete: () async {
-                            try {
-                              await userSnapshot.reference
-                                  .collection('leaveRequests')
-                                  .doc(leaveDoc.id)
-                                  .delete();
-
-                              print('Kullanıcının izin belgesi silindi.');
-                            } catch (error) {
-                              print(
-                                  'Kullanıcının izin belgesi silinirken bir hata oluştu: $error');
-                            }
-                          },
-                        );
-                      }).toList(),
-                    );
-                  },
-                );
-              },
-            );
-          }
-        },
+      body: Container(
+        child: Text("merhaba mehmet"),
       ),
-
       //////////////////////////person_add_alt_1
 
       bottomNavigationBar: BottomNavigationBar(
@@ -384,7 +291,7 @@ class _adminPageState extends State<adminPage> {
             icon: IconButton(
               icon: Icon(Icons.add_task_outlined),
               onPressed: () {
-                Navigator.pushNamed(context, '/adminPage');
+                Navigator.pushNamed(context, '/leavePage');
               },
             ),
             label: 'İzinler',
@@ -412,6 +319,8 @@ class _adminPageState extends State<adminPage> {
       ),
     );
   }
+
+//popUpDialog(BuildContext context) {}
 }
 
 ///////////////////////////////////////////////////

@@ -1,5 +1,6 @@
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/sayfalar/search_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/group_tile.dart';
@@ -23,6 +24,7 @@ class _GroupPageState extends State<GroupPage> {
   Stream? groups;
   bool _isLoading = false;
   String groupName = "";
+  String rool = "";
 
   @override
   void initState() {
@@ -55,6 +57,11 @@ class _GroupPageState extends State<GroupPage> {
         department = val!;
       });
     });
+    await HelperFunctions.getUserRoolFromSF().then((val) {
+      setState(() {
+        rool = val!;
+      });
+    });
     // getting the list of snapshots in our stream
     await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
@@ -69,10 +76,21 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (rool == "Admin") {
+              Navigator.pushReplacementNamed(context, "/adminPage");
+            } else {
+              Navigator.pushReplacementNamed(context, "/homePage");
+            }
+          },
+        ),
         actions: [
           IconButton(
               onPressed: () {
-                //nextScreen(context, const SearchPage());
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchPage()));
               },
               icon: const Icon(
                 Icons.search,
@@ -87,131 +105,6 @@ class _GroupPageState extends State<GroupPage> {
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 27),
         ),
       ),
-      drawer: Drawer(
-          child: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 50),
-        children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            size: 150,
-            color: Colors.grey[700],
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Text(
-            username,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          const Divider(
-            height: 2,
-          ),
-          ListTile(
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/groupPage');
-            },
-            selectedColor: Theme.of(context).primaryColor,
-            selected: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
-            title: const Text(
-              "Grup",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          ListTile(
-            onTap: () {},
-            selectedColor: Theme.of(context).primaryColor,
-            selected: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.auto_graph_outlined),
-            title: const Text(
-              "Rapor ve istatistik",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                    username: username,
-                    email: email,
-                    department: department,
-                  ),
-                ),
-              );
-
-              // nextScreenReplace(
-              //     context,
-              //     ProfilePage(
-              //       userName: userName,
-              //       email: email,
-              //     ));
-            },
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
-            title: const Text(
-              "Profil",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          ListTile(
-            onTap: () async {
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text("Çıkış yap"),
-                      content: const Text(
-                          "Çıkış yapmak istediğinizden emin misiniz?"),
-                      actions: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            // await authService.signOut();
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             const AktivationLogin()),
-                            //     (route) => false);
-                          },
-                          icon: const Icon(
-                            Icons.done,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    );
-                  });
-            },
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text(
-              "Çıkış Yap",
-              style: TextStyle(color: Colors.black),
-            ),
-          )
-        ],
-      )),
       body: groupList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

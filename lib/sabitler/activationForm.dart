@@ -163,49 +163,6 @@ class _ActivationFormState extends State<ActivationForm> {
                   height: 20,
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Kayıt Türünü Seçiniz: ",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 116, 116, 116),
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        dropdownColor: Colors.blue[900],
-                        isDense: true,
-                        isExpanded: false,
-                        iconEnabledColor: Color.fromARGB(255, 116, 116, 116),
-                        focusColor: Color.fromARGB(255, 255, 7, 7),
-                        items: options.map((String dropDownStringItem) {
-                          return DropdownMenuItem<String>(
-                            value: dropDownStringItem,
-                            child: Text(
-                              dropDownStringItem,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (newValueSelected) {
-                          setState(() {
-                            _currentItemSelected = newValueSelected!;
-                            rool = newValueSelected;
-                          });
-                        },
-                        value: _currentItemSelected,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
                   width: MediaQuery.of(context).size.width / 2,
                   height: 50,
                   padding: EdgeInsets.all(5),
@@ -228,12 +185,11 @@ class _ActivationFormState extends State<ActivationForm> {
                           formkey.currentState!.reset();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                  "Kayıt yapıldı, giriş sayfasına yönlendiriliyorsunuz"),
+                              content: Text("Kayıt yapıldı.."),
                             ),
                           );
 
-                          Navigator.pushReplacementNamed(context, "/");
+                          Navigator.pop(context);
                           print(UserResult.user!.uid);
                           print(UserResult.user!.email);
                           saveActivationDataToFirestore(

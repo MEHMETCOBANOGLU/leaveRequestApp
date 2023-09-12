@@ -21,7 +21,6 @@ class DatabaseService {
       "uid": uid,
       "department": department,
       "rool": rool,
-      "username": ""
     });
   }
 
@@ -45,12 +44,17 @@ class DatabaseService {
     return userCollection.doc(uid).snapshots();
   }
 
-  // creating a group
-  Future createGroup(String username, String id, String groupName) async {
+  // get user activation
+  getUserActivation() async {
+    return userCollection.doc(uid).snapshots();
+  }
+
+// creating a group
+  Future ccreateGroup(String userName, String id, String groupName) async {
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
       "groupIcon": "",
-      "admin": "${id}_$username",
+      "admin": "${id}_$userName",
       "members": [],
       "groupId": "",
       "recentMessage": "",
@@ -58,7 +62,7 @@ class DatabaseService {
     });
     // update the members
     await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${uid}_$username"]),
+      "members": FieldValue.arrayUnion(["${uid}_$userName"]),
       "groupId": groupDocumentReference.id,
     });
 
@@ -68,6 +72,70 @@ class DatabaseService {
           FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
     });
   }
+
+  // creating a group
+  Future<String> createGroup(
+      String username, String id, String groupName) async {
+    DocumentReference groupDocumentReference = await groupCollection.add({
+      "groupName": groupName,
+      "groupIcon": "",
+      "admin": "${id}_$username",
+      "members": [],
+      "groupId": "",
+      "recentMessage": "",
+      "recentMessageSender": "",
+    });
+
+    await groupDocumentReference.update({
+      "members": FieldValue.arrayUnion(["${uid}_$username"]),
+      "groupId": groupDocumentReference.id,
+    });
+
+    DocumentReference userDocumentReference = userCollection.doc(uid);
+    await userDocumentReference.update({
+      "groups":
+          FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
+    });
+
+    return groupDocumentReference.id; // Oluşturulan grup ID'sini dön
+  }
+
+  ///
+  Future groupJoin(String groupId, String username, String groupName,
+      String otherUserId) async {
+    // doc reference
+    DocumentReference userDocumentReference = userCollection.doc(otherUserId);
+    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+
+    await groupDocumentReference.update({
+      "members": FieldValue.arrayUnion(["${otherUserId}_$username"])
+    });
+
+    await userDocumentReference.update({
+      "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
+    });
+  }
+
+  ////////////////////
+  // users daki droups belgesine grubu ekleme:
+  Future GroupJoin(String groupId, String username, String groupName) async {
+    // doc reference
+    DocumentReference userDocumentReference = userCollection.doc(uid);
+    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
+
+    DocumentSnapshot documentSnapshot = await userDocumentReference.get();
+    List<dynamic> groups = await documentSnapshot['groups'];
+
+    // if user has our groups -> then remove then or also in other part re join
+
+    await userDocumentReference.update({
+      "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
+    });
+    await groupDocumentReference.update({
+      "members": FieldValue.arrayUnion(["${uid}_$username"])
+    });
+  }
+  /////////////////////
 
   // getting the chats
   getChats(String groupId) async {
@@ -135,6 +203,8 @@ class DatabaseService {
       });
     }
   }
+
+  ///group join
 
   // send message
   sendMessage(String groupId, Map<String, dynamic> chatMessageData) async {

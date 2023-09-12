@@ -28,38 +28,42 @@ class _UsersActivationState extends State<UsersActivation> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Çıkış işlemi burada yapılabilir
-            Navigator.pop(context); // Geri dön
+            Navigator.pushNamed(context, '/adminPage');
           },
         ),
-        title: StreamBuilder<DocumentSnapshot>(
-          stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-
-            if (snapshot.hasError) {
-              return Text(
-                  'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-            }
-
-            final userData =
-                snapshot.data?.data() as Map<String, dynamic>? ?? {};
-            final String name = userData['name'] as String? ?? '';
-            final String department = userData['department'] as String? ?? '';
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: TextStyle(fontSize: 18)),
-                Text(department, style: TextStyle(fontSize: 14)),
-              ],
-            );
-          },
+        title: const Text(
+          "Kullanıcı Aktivasyon",
+          style: TextStyle(
+              color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
+        // title: StreamBuilder<DocumentSnapshot>(
+        //   stream:
+        //       _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
+        //   builder:
+        //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return CircularProgressIndicator();
+        //     }
+
+        //     if (snapshot.hasError) {
+        //       return Text(
+        //           'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
+        //     }
+
+        //     final userData =
+        //         snapshot.data?.data() as Map<String, dynamic>? ?? {};
+        //     final String name = userData['name'] as String? ?? '';
+        //     final String department = userData['department'] as String? ?? '';
+
+        //     return Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         Text(name, style: TextStyle(fontSize: 18)),
+        //         Text(department, style: TextStyle(fontSize: 14)),
+        //       ],
+        //     );
+        //   },
+        // ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
@@ -71,35 +75,30 @@ class _UsersActivationState extends State<UsersActivation> {
           ),
         ],
       ),
+
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('users').snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return CircularProgressIndicator();
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot userSnapshot = snapshot.data!.docs[index];
+          if (snapshot.hasData) {
+            List<QueryDocumentSnapshot> userDocs = snapshot.data!.docs;
+            List<Widget> widgets =
+                []; // Widget listesini saklamak için bir liste
 
-                String name = userSnapshot["name"] as String? ?? "";
-                String email = userSnapshot["email"] as String? ?? "";
-                String rool = userSnapshot["rool"] as String? ?? "";
-                String department = userSnapshot["department"] as String? ?? "";
+            for (int index = 0; index < userDocs.length; index++) {
+              DocumentSnapshot userSnapshot = userDocs[index];
 
-                // Check if "username" field exists
-                if (userSnapshot.data() is Map<String, dynamic> &&
-                    (userSnapshot.data() as Map<String, dynamic>)
-                        .containsKey("username")) {
-                  String username = userSnapshot["username"] as String;
-                  if (username.isEmpty) {
-                    return Container(); // Username is empty, don't show card
-                  } else {
-                    return Container(); // Username is not empty, don't show card
-                  }
-                } else {
-                  // "username" field doesn't exist, show the card
-                  return ActivationCard(
+              String name = userSnapshot["name"] as String? ?? "";
+              String email = userSnapshot["email"] as String? ?? "";
+              String rool = userSnapshot["rool"] as String? ?? "";
+              String department = userSnapshot["department"] as String? ?? "";
+              Map<String, dynamic>? userData =
+                  userSnapshot.data() as Map<String, dynamic>?;
+              bool hasUsername = userData?.containsKey("username") ?? false;
+
+              if (!hasUsername) {
+                // "username" alanı yoksa, ActivationCard ekleyin
+                widgets.add(
+                  ActivationCard(
                     name: name,
                     department: department,
                     email: email,
@@ -110,13 +109,29 @@ class _UsersActivationState extends State<UsersActivation> {
                           arguments: userId);
                     },
                     onReject: () {},
-                  );
-                }
+                  ),
+                );
+              }
+            }
+
+            if (widgets.isEmpty) {
+              // Hiç "username" olmayan kullanıcı yoksa, noGroupWidget ekleyin
+              widgets.add(noGroupWidget());
+            }
+
+            // Listeyi ListView.builder'a döndürün
+            return ListView.builder(
+              itemCount: widgets.length,
+              itemBuilder: (context, index) {
+                return widgets[index];
               },
             );
           }
+          return CircularProgressIndicator();
         },
       ),
+
+      ////////////////////////////////////
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -151,4 +166,26 @@ class _UsersActivationState extends State<UsersActivation> {
       ),
     );
   }
+}
+
+noGroupWidget() {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 25),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 250,
+        ),
+        Center(
+          child: const Text(
+            "Herhangi bir kullanıcı aktivasyonu bulunmamaktadır",
+            style: TextStyle(fontSize: 30),
+            textAlign: TextAlign.center,
+          ),
+        )
+      ],
+    ),
+  );
 }

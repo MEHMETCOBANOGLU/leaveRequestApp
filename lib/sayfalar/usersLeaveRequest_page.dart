@@ -1,67 +1,78 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/sabitler/leaveCardUsers.dart';
+import 'package:enelsis_app/sayfalar/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../sabitler/ext.dart';
 
-class IzinlerSayfasi extends StatefulWidget {
-  const IzinlerSayfasi({super.key});
+class UsersLeaveRequest extends StatefulWidget {
+  const UsersLeaveRequest({super.key});
 
   @override
-  State<IzinlerSayfasi> createState() => _IzinlerSayfasiState();
+  State<UsersLeaveRequest> createState() => _UsersLeaveRequestState();
 }
 
-class _IzinlerSayfasiState extends State<IzinlerSayfasi> {
+class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
   final _firestore = FirebaseFirestore.instance;
   final _currentUser = FirebaseAuth.instance.currentUser;
+
+  String username = "";
+  String email = "";
+  String department = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Geri dön
-          },
+
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
+        title: const Text(
+          "İzinler",
+          style: TextStyle(
+              color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
-        title: StreamBuilder<DocumentSnapshot>(
-          stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
+        // title: StreamBuilder<DocumentSnapshot>(
+        //   stream:
+        //       _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
+        //   builder:
+        //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return CircularProgressIndicator();
+        //     }
 
-            if (snapshot.hasError) {
-              return Text(
-                  'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-            }
+        //     if (snapshot.hasError) {
+        //       return Text(
+        //           'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
+        //     }
 
-            // final userData =
-            //     snapshot.data?.data() as Map<String, dynamic>? ?? {};
-            // final String name = userData['name'] as String? ?? '';
-            // final String department = userData['department'] as String? ?? '';
+        //     // final userData =
+        //     //     snapshot.data?.data() as Map<String, dynamic>? ?? {};
+        //     // final String name = userData['name'] as String? ?? '';
+        //     // final String department = userData['department'] as String? ?? '';
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                    child: Text("İzinler",
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                          fontFamily: "Great Vibes",
-                          fontStyle: FontStyle.italic,
-                        ))),
-                // Text(department, style: TextStyle(fontSize: 14)),
-              ],
-            );
-          },
-        ),
+        //     return Column(
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: [
+        //         Center(
+        //             child: Text("İzinler",
+        //                 style: TextStyle(
+        //                   fontSize: 25,
+        //                   color: Colors.white,
+        //                   fontFamily: "Great Vibes",
+        //                   fontStyle: FontStyle.italic,
+        //                 ))),
+        //         // Text(department, style: TextStyle(fontSize: 14)),
+        //       ],
+        //     );
+        //   },
+        // ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
