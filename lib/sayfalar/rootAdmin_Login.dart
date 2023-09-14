@@ -112,7 +112,7 @@ class _RootAdminState extends State<RootAdmin> {
                       if (formkey.currentState!.validate()) {
                         formkey.currentState!.save();
 
-                        if (lisans == "1234567890" && password == "123123") {
+                        if (lisans == "123123" && password == "123123") {
                           // Eğer doğru lisans ID ve şifre girildiyse, Aktivasyon Girişi sayfasına git
                           Navigator.pushReplacementNamed(
                               context, "/rootAdminPage");

@@ -53,6 +53,8 @@ dependencies:
   backdrop_modal_route: ^2.0.2
   flutter_riverpod: ^2.3.10
   provider: ^6.0.5
+  firebase_messaging: ^14.6.7
+grock: ^0.3.3  
 
 
 dev_dependencies:

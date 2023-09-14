@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/activationCard.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
+import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +20,22 @@ class _UsersActivationState extends State<UsersActivation> {
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
+  String rool = "";
+
+  @override
+  void initState() {
+    gettingUserData();
+    super.initState();
+  }
+
+  gettingUserData() async {
+    await HelperFunctions.getUserRoolFromSF().then((val) {
+      setState(() {
+        rool = val!;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _currentUser = FirebaseAuth.instance.currentUser;
@@ -28,7 +46,7 @@ class _UsersActivationState extends State<UsersActivation> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushNamed(context, '/adminPage');
+            Navigator.pushReplacementNamed(context, "/adminPage");
           },
         ),
         title: const Text(
@@ -36,34 +54,6 @@ class _UsersActivationState extends State<UsersActivation> {
           style: TextStyle(
               color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
-        // title: StreamBuilder<DocumentSnapshot>(
-        //   stream:
-        //       _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-        //   builder:
-        //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return CircularProgressIndicator();
-        //     }
-
-        //     if (snapshot.hasError) {
-        //       return Text(
-        //           'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-        //     }
-
-        //     final userData =
-        //         snapshot.data?.data() as Map<String, dynamic>? ?? {};
-        //     final String name = userData['name'] as String? ?? '';
-        //     final String department = userData['department'] as String? ?? '';
-
-        //     return Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         Text(name, style: TextStyle(fontSize: 18)),
-        //         Text(department, style: TextStyle(fontSize: 14)),
-        //       ],
-        //     );
-        //   },
-        // ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
@@ -106,9 +96,11 @@ class _UsersActivationState extends State<UsersActivation> {
                     onApprove: () {
                       String userId = userSnapshot.id;
                       Navigator.pushNamed(context, '/activationForm',
-                          arguments: userId);
+                          arguments: {'userId': userId, 'rool': rool});
                     },
-                    onReject: () {},
+                    onReject: () {
+                      print(department);
+                    },
                   ),
                 );
               }

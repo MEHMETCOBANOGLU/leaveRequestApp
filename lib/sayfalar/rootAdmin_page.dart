@@ -31,11 +31,10 @@ class _RootAdminPageState extends State<RootAdminPage> {
             Navigator.pop(context);
           },
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("ROOT ADMİN AKTİVASYON", style: TextStyle(fontSize: 18)),
-          ],
+        title: const Text(
+          "ROOT ADMİN AKTİVASYON",
+          style: TextStyle(
+              color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
         actions: [
           Container(
@@ -84,9 +83,11 @@ class _RootAdminPageState extends State<RootAdminPage> {
                     onApprove: () {
                       String userId = userSnapshot.id;
                       Navigator.pushNamed(context, '/activationForm',
-                          arguments: userId);
+                          arguments: {'userId': userId, 'rool': rool});
                     },
-                    onReject: () {},
+                    onReject: () {
+                      print(rool);
+                    },
                   );
                 }
               },

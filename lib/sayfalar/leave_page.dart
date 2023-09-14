@@ -63,40 +63,16 @@ class _LeavePageState extends State<LeavePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     // Çıkış işlemi burada yapılabilir
-        //     Navigator.pop(context); // Geri dön
-        //   },
-        // ),
-        title: StreamBuilder<DocumentSnapshot>(
-          stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-
-            if (snapshot.hasError) {
-              return Text(
-                  'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-            }
-
-            final userData =
-                snapshot.data?.data() as Map<String, dynamic>? ?? {};
-            final String name = userData['name'] as String? ?? '';
-            final String department = userData['department'] as String? ?? '';
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: TextStyle(fontSize: 18)),
-                Text(department, style: TextStyle(fontSize: 14)),
-              ],
-            );
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, "/adminPage");
           },
+        ),
+        title: const Text(
+          "İzinler",
+          style: TextStyle(
+              color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
         actions: [
           Container(
@@ -107,15 +83,8 @@ class _LeavePageState extends State<LeavePage> {
               child: Image.asset("assets/enelsis_logo2.png"),
             ),
           ),
-          // IconButton(
-          //   icon: Icon(Icons.logout),
-          //   onPressed: () {
-          //     // Çıkış işlemi burada yapılabilir
-          //   },
-          // ),
         ],
       ),
-      ////////////////////////////////////////1.48.dk
 
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('users').snapshots(),
@@ -154,208 +123,237 @@ class _LeavePageState extends State<LeavePage> {
 
                         String name = userSnapshot["name"] as String? ?? "";
                         String uidd = userSnapshot["uid"] as String? ?? "";
+                        String leavedepartment =
+                            userSnapshot["department"] as String? ?? "";
 
-                        return LeaveCard(
-                          izinTipi: izinTipi,
-                          izinGunSayisi: izinGunSayisi,
-                          selectedBaslangicTarihi: selectedBaslangicTarihi,
-                          selectedBitisTarihi: selectedBitisTarihi,
-                          izinAlmaNedeni: izinAlmaNedeni,
-                          onay: onay,
-                          name: name,
-                          department:
-                              userSnapshot["department"] as String? ?? "",
-                          onApprove: () {
-                            setState(() async {
-                              onay = "ONAYLANDI";
-                              print(onay);
+                        if (department != leavedepartment) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 250,
+                                ),
+                                Center(
+                                  child: const Text(
+                                    "Herhangi bir izin talebi bulunmamaktadır",
+                                    style: TextStyle(fontSize: 30),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        } else {
+                          return LeaveCard(
+                            izinTipi: izinTipi,
+                            izinGunSayisi: izinGunSayisi,
+                            selectedBaslangicTarihi: selectedBaslangicTarihi,
+                            selectedBitisTarihi: selectedBitisTarihi,
+                            izinAlmaNedeni: izinAlmaNedeni,
+                            onay: onay,
+                            name: name,
+                            department: leavedepartment,
+                            onApprove: () {
+                              setState(() async {
+                                onay = "ONAYLANDI";
+                                print(onay);
 
-                              // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
-                              CollectionReference leaveRequestsCollection =
-                                  userSnapshot.reference
-                                      .collection('leaveRequests');
+                                // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
+                                CollectionReference leaveRequestsCollection =
+                                    userSnapshot.reference
+                                        .collection('leaveRequests');
 
-                              // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
-                              QuerySnapshot querySnapshot =
-                                  await leaveRequestsCollection.get();
+                                // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
+                                QuerySnapshot querySnapshot =
+                                    await leaveRequestsCollection.get();
 
-                              // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
-                              for (QueryDocumentSnapshot leaveDoc
-                                  in querySnapshot.docs) {
-                                leaveDoc.reference.update({
-                                  'onay': onay,
-                                }).then((_) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellendi.');
-                                }).catchError((error) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
-                                });
-                              }
-                            });
-                          },
-                          onReject: () {
-                            setState(() async {
-                              onay = "REDDEDİLDİ";
-                              print(onay);
-                              // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
-                              CollectionReference leaveRequestsCollection =
-                                  userSnapshot.reference
-                                      .collection('leaveRequests');
+                                // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
+                                for (QueryDocumentSnapshot leaveDoc
+                                    in querySnapshot.docs) {
+                                  leaveDoc.reference.update({
+                                    'onay': onay,
+                                  }).then((_) {
+                                    print(
+                                        'İzin talebi onay bilgisi güncellendi.');
+                                  }).catchError((error) {
+                                    print(
+                                        'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
+                                  });
+                                }
+                              });
+                            },
+                            onReject: () {
+                              setState(() async {
+                                onay = "REDDEDİLDİ";
+                                print(onay);
+                                // Kullanıcının izin talebinin bulunduğu koleksiyon referansını alın
+                                CollectionReference leaveRequestsCollection =
+                                    userSnapshot.reference
+                                        .collection('leaveRequests');
 
-                              // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
-                              QuerySnapshot querySnapshot =
-                                  await leaveRequestsCollection.get();
+                                // İzin taleplerinin koleksiyonundaki tüm dokümanları alın
+                                QuerySnapshot querySnapshot =
+                                    await leaveRequestsCollection.get();
 
-                              // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
-                              for (QueryDocumentSnapshot leaveDoc
-                                  in querySnapshot.docs) {
-                                leaveDoc.reference.update({
-                                  'onay': onay,
-                                }).then((_) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellendi.');
-                                }).catchError((error) {
-                                  print(
-                                      'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
-                                });
-                              }
-                            });
-                          }, ////////////////////////////////////////
+                                // Tüm izin talebi dokümanlarını dönüp onay alanını güncelleyin
+                                for (QueryDocumentSnapshot leaveDoc
+                                    in querySnapshot.docs) {
+                                  leaveDoc.reference.update({
+                                    'onay': onay,
+                                  }).then((_) {
+                                    print(
+                                        'İzin talebi onay bilgisi güncellendi.');
+                                  }).catchError((error) {
+                                    print(
+                                        'İzin talebi onay bilgisi güncellenirken hata oluştu: $error');
+                                  });
+                                }
+                              });
+                            }, ////////////////////////////////////////
 
-                          onMessage: () {
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  return StatefulBuilder(
-                                      builder: ((context, setState) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                        "Sohbet grubu  oluştur",
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          _isLoading == true
-                                              ? Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColor),
-                                                )
-                                              : TextField(
-                                                  onChanged: (val) {
-                                                    setState(() {
-                                                      groupName = val;
-                                                    });
-                                                  },
-                                                  style: const TextStyle(
-                                                      color: Colors.black),
-                                                  decoration: InputDecoration(
-                                                      enabledBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Theme.of(context)
-                                                                  .primaryColor),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  20)),
-                                                      errorBorder: OutlineInputBorder(
-                                                          borderSide: const BorderSide(
-                                                              color:
-                                                                  Colors.red),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  20)),
-                                                      focusedBorder: OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Theme.of(context).primaryColor),
-                                                          borderRadius: BorderRadius.circular(20))),
-                                                ),
+                            onMessage: () {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) {
+                                    return StatefulBuilder(
+                                        builder: ((context, setState) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          "Sohbet grubu  oluştur",
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            _isLoading == true
+                                                ? Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor),
+                                                  )
+                                                : TextField(
+                                                    onChanged: (val) {
+                                                      setState(() {
+                                                        groupName = val;
+                                                      });
+                                                    },
+                                                    style: const TextStyle(
+                                                        color: Colors.black),
+                                                    decoration: InputDecoration(
+                                                        enabledBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Theme.of(context)
+                                                                    .primaryColor),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    20)),
+                                                        errorBorder: OutlineInputBorder(
+                                                            borderSide: const BorderSide(
+                                                                color:
+                                                                    Colors.red),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                    20)),
+                                                        focusedBorder: OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Theme.of(context).primaryColor),
+                                                            borderRadius: BorderRadius.circular(20))),
+                                                  ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .primaryColor),
+                                            child: const Text(
+                                              "İptal",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              if (groupName != "") {
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+                                                // await DatabaseService(
+                                                //         uid: FirebaseAuth.instance
+                                                //             .currentUser!.uid)
+                                                //     .createGroup(
+                                                //         username,
+                                                //         FirebaseAuth.instance
+                                                //             .currentUser!.uid,
+                                                //         groupName);
+                                                String newGroupId =
+                                                    await DatabaseService(
+                                                            uid: FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid)
+                                                        .createGroup(
+                                                            username,
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid,
+                                                            groupName);
+
+                                                await DatabaseService(uid: uidd)
+                                                    .groupJoin(newGroupId, name,
+                                                        groupName, uidd)
+                                                    .whenComplete(() {
+                                                  _isLoading = false;
+                                                });
+                                                Navigator.pop(context);
+                                                showSnackbar(
+                                                    context,
+                                                    Colors.green,
+                                                    "Grup başarılı bir şekilde oluşturuldu.");
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .primaryColor),
+                                            child: const Text(
+                                              "Oluştur",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
                                         ],
-                                      ),
-                                      actions: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor),
-                                          child: const Text(
-                                            "İptal",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            if (groupName != "") {
-                                              setState(() {
-                                                _isLoading = true;
-                                              });
-                                              // await DatabaseService(
-                                              //         uid: FirebaseAuth.instance
-                                              //             .currentUser!.uid)
-                                              //     .createGroup(
-                                              //         username,
-                                              //         FirebaseAuth.instance
-                                              //             .currentUser!.uid,
-                                              //         groupName);
-                                              String newGroupId =
-                                                  await DatabaseService(
-                                                          uid: FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid)
-                                                      .createGroup(
-                                                          username,
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid,
-                                                          groupName);
-
-                                              await DatabaseService(uid: uidd)
-                                                  .groupJoin(newGroupId, name,
-                                                      groupName, uidd)
-                                                  .whenComplete(() {
-                                                _isLoading = false;
-                                              });
-                                              Navigator.pop(context);
-                                              showSnackbar(
-                                                  context,
-                                                  Colors.green,
-                                                  "Grup başarılı bir şekilde oluşturuldu.");
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor),
-                                          child: const Text(
-                                            "Oluştur",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }));
-                                });
-                          },
-                          onDelete: () async {
-                            try {
-                              await userSnapshot.reference
-                                  .collection('leaveRequests')
-                                  .doc(leaveDoc.id)
-                                  .delete();
-                              print('Kullanıcının izin belgesi silindi.');
-                            } catch (error) {
-                              print(
-                                  'Kullanıcının izin belgesi silinirken bir hata oluştu: $error');
-                            }
-                          },
-                        );
+                                      );
+                                    }));
+                                  });
+                            },
+                            onDelete: () async {
+                              print('current department $department');
+                              print('leave card department $leavedepartment');
+                              // try {
+                              //   await userSnapshot.reference
+                              //       .collection('leaveRequests')
+                              //       .doc(leaveDoc.id)
+                              //       .delete();
+                              //   print('Kullanıcının izin belgesi silindi.');
+                              // } catch (error) {
+                              //   print(
+                              //       'Kullanıcının izin belgesi silinirken bir hata oluştu: $error');
+                              // }
+                            },
+                          );
+                        }
                       }).toList(),
                     );
                   },

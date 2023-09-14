@@ -53,8 +53,12 @@ class MyRoutes {
         return MaterialPageRoute(builder: (context) => UsersActivation());
 
       case '/activationForm':
-        var d = setting.arguments as String;
-        return MaterialPageRoute(builder: (context) => ActivationForm(d));
+        var arguments = setting.arguments as Map<String, dynamic>;
+        var userId = arguments['userId'] as String?;
+        var rool = arguments['rool'] as String?;
+        return MaterialPageRoute(
+          builder: (context) => ActivationForm(userId: userId, rool: rool),
+        );
 
       case '/rootAdminPage':
         return MaterialPageRoute(builder: (context) => RootAdminPage());

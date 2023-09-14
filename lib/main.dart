@@ -2,10 +2,13 @@ import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/myRouters.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/services/auth_service2.dart';
 import 'firebase_options.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +32,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getUserLoggedInStatus();
+    // getUserLoggedInStatus();
+
+    // var _firebaseMessaging = FirebaseMessaging.instance;
+    // _firebaseMessaging.configure(
+    //     onMessage: (Map<String, dynamic> message) async {
+    //   print("onMessage: $message");
+    // });
   }
 
   getUserLoggedInStatus() async {

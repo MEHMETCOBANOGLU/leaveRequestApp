@@ -1,63 +1,83 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/tema.dart';
+import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ActivationForm extends StatefulWidget {
   final String? userId;
-  ActivationForm(this.userId, {super.key});
+  final String? rool;
+
+  ActivationForm({Key? key, this.userId, this.rool}) : super(key: key);
+
+  // ...
 
   @override
   State<ActivationForm> createState() => _ActivationFormState();
 }
 
 class _ActivationFormState extends State<ActivationForm> {
-  void saveActivationDataToFirestore(String nickName, String password) async {
+  ///
+
+/////////////////
+  Tema tema = Tema();
+  bool sifre_gozukme = true;
+  // burda dep kon rol
+  late String user, email, password, name, department, nickName;
+  final formkey = GlobalKey<FormState>();
+  final firebaseAuth = FirebaseAuth.instance;
+
+  // final _tEmail = TextEditingController();
+  // final _tPassword = TextEditingController();
+
+  final _firestore = FirebaseFirestore.instance;
+  void saveActivationDataToFirestore(
+      String nickName, String password, String department) async {
     try {
       DocumentReference userDocumentRef =
           FirebaseFirestore.instance.collection('users').doc(widget.userId);
-
-      await userDocumentRef.update({
-        'password': password,
-      });
-
-      DocumentSnapshot userSnapshot = await userDocumentRef.get();
-
-      if (userSnapshot.exists) {
-        Map<String, dynamic> existingData =
-            userSnapshot.data() as Map<String, dynamic>;
-        existingData['username'] = nickName;
-
-        await userDocumentRef.set(existingData);
+      // departmani da her iki tarafta guncelle mehemt ve admin_depatmen koleskiyonu olusmadi onu da hallet
+      //artik if else kontorlu yapmana gerek kalmayabilir
+      if (widget.rool == "Admin") {
+        // DocumentReference adminDepartments = await _firestore
+        //     .collection('users')
+        //     .doc(widget.userId)
+        //     .collection('admindepartment')
+        //     .add({
+        //   'password': password,
+        //   'username': nickName,
+        //   'department': department
+        // });
+        await userDocumentRef.update({
+          'password': password,
+          'username': nickName,
+          'department': department
+        });
+      } else {
+        await userDocumentRef.update({
+          'password': password,
+          'username': nickName,
+          'department': department
+        });
       }
+      // DocumentSnapshot userSnapshot = await userDocumentRef.get();
+
+      // if (userSnapshot.exists) {
+      //   Map<String, dynamic> existingData =
+      //       userSnapshot.data() as Map<String, dynamic>;
+      //   existingData['username'] = nickName;
+
+      //   await userDocumentRef.set(existingData);
+      // }
 
       print('Veriler başarıyla Firestore\'a kaydedildi.');
     } catch (e) {
       print('Hata: $e');
     }
   }
-
-  ///
-
-/////////////////
-  Tema tema = Tema();
-  bool sifre_gozukme = false;
-
-  late String user, email, password, name, department, nickName;
-  final formkey = GlobalKey<FormState>();
-  final firebaseAuth = FirebaseAuth.instance;
-
-  var options = [
-    'Üye',
-    'Admin',
-  ];
-  var _currentItemSelected = "Üye";
-  var rool = "Üye";
-
-  // final _tEmail = TextEditingController();
-  // final _tPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +103,7 @@ class _ActivationFormState extends State<ActivationForm> {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5),
-                  child: Text('Kullanıcı Aktivasyon ${widget.userId}',
+                  child: Text('Kullanıcı Aktivasyon',
                       style: GoogleFonts.bebasNeue(
                         color: renk("224ABE"),
                         fontSize: 30,
@@ -110,6 +130,48 @@ class _ActivationFormState extends State<ActivationForm> {
                         "kullanıcı-adı giriniz",
                         Icons
                             .person_add_alt), // burda tema.darttaki input giris alani yer aliyor
+                    style: GoogleFonts.quicksand(
+                      color: renk(metin_renk),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration:
+                      tema.inputBoxDec(), // temadan gelen box decaration
+                  margin:
+                      EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+                  child: DropdownButtonFormField<String>(
+                    onChanged: (value) {
+                      setState(() async {
+                        department = value!;
+                      });
+                    },
+                    items: [
+                      "Yönetim departmanı",
+                      "Ar-ge departmanı",
+                      "Üretim departmanı",
+                      "Pazarlama departmanı",
+                      "Finans departmanı",
+                      "Muhasebe departmanı",
+                      "İnsan kaynakları departmanı",
+                      "Halka ilişkiler departmanı",
+                      "Hukuk departmanı"
+                    ].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Lütfen bir departman seçin";
+                      }
+                      return null;
+                    },
+                    decoration: tema.inputDec(
+                        "Departman giriniz", Icons.badge_outlined),
                     style: GoogleFonts.quicksand(
                       color: renk(metin_renk),
                     ),
@@ -192,10 +254,10 @@ class _ActivationFormState extends State<ActivationForm> {
                           Navigator.pop(context);
                           print(UserResult.user!.uid);
                           print(UserResult.user!.email);
+                          await HelperFunctions.saveUserDepartmentSF(
+                              department);
                           saveActivationDataToFirestore(
-                            nickName,
-                            password,
-                          );
+                              nickName, password, department);
                         } catch (e) {
                           print(e.toString());
                         }
@@ -217,8 +279,9 @@ class _ActivationFormState extends State<ActivationForm> {
                 Container(
                   child: Center(
                     child: TextButton(
-                      onPressed: () => Navigator.pushReplacementNamed(
-                          context, "/aktivationLogin"),
+                      onPressed: () =>
+                          print(widget.rool), // Navigator.pushReplacementNamed(
+                      //     context, "/aktivationLogin"),
                       //print(widget.userId),
                       child: Text(
                         "Bir önceki sayfaya geri dön",

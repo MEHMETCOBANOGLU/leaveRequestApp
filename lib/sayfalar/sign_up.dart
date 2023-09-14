@@ -333,7 +333,7 @@ class _SignUpState extends State<SignUp> {
             await HelperFunctions.saveUserEmailSF(email);
             await HelperFunctions.saveUserNameSF(name);
             await HelperFunctions.saveUserDepartmentSF(department);
-            await HelperFunctions.saveUserDepartmentSF(rool);
+            await HelperFunctions.saveUserRoolDepartmentSF(rool);
             Navigator.pushReplacementNamed(context, "/");
           } else {
             showSnackbar(context, Colors.red, value);

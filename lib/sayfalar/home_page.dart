@@ -31,11 +31,12 @@ class _HomePageState extends State<HomePage> {
   final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   String izinTipi = '';
-  String izinGunSayisi = '';
-  String izinAlmaNedeni = '';
+
   String onay = '';
   String username = "";
   String department = "";
+  final izinGunSayisiController = TextEditingController();
+  final izinAlmaNedeniController = TextEditingController();
 
   @override
   void initState() {
@@ -112,12 +113,6 @@ class _HomePageState extends State<HomePage> {
               child: Image.asset("assets/enelsis_logo2.png"),
             ),
           ),
-          // IconButton(
-          //   icon: Icon(Icons.logout),
-          //   onPressed: () {
-          //     // Çıkış işlemi burada yapılabilir
-          //   },
-          // ),
         ],
       ),
       drawer: Drawer(
@@ -145,6 +140,7 @@ class _HomePageState extends State<HomePage> {
           ),
           ListTile(
             onTap: () {
+              print(department);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -271,11 +267,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 16), //kaldirabiliriisn
               TextFormField(
                 keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    izinGunSayisi = value;
-                  });
-                },
+                controller: izinGunSayisiController,
                 decoration:
                     InputDecoration(labelText: "Kaç Gün İzin Alacaksınız?"),
               ),
@@ -335,56 +327,13 @@ class _HomePageState extends State<HomePage> {
               SizedBox(height: 16),
               TextFormField(
                 maxLines: 3,
-                onChanged: (value) {
-                  setState(() {
-                    izinAlmaNedeni =
-                        value; // Girilen izin alma nedenini güncelle
-                  });
-                },
+                controller: izinAlmaNedeniController,
                 decoration: InputDecoration(labelText: "İzin Alma Nedeni"),
               ),
               SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () async {
-                  // // İzin talebi verilerini al
-                  // String izinTipi =  izinTipi; // Dropdown'dan seçilen değer
-                  // int izinGunSayisi = izinGunSayisi; // TextFormField'dan alınan değer
-                  DateTime? selectedBaslangicTarihi = baslangicTarihi;
-                  DateTime? selectedBitisTarihi = bitisTarihi;
-
-                  Timestamp baslangicTarihiTimestamp =
-                      Timestamp.fromDate(selectedBaslangicTarihi!);
-                  Timestamp bitisTarihiTimestamp =
-                      Timestamp.fromDate(selectedBitisTarihi!);
-
-                  // String izinAlmaNedeni = izinAlmaNedeni; // TextFormField'dan alınan değer
-
-                  // Firestore'a izin talebi verilerini kaydet
-                  try {
-                    DocumentReference izinTalebiRef = await _firestore
-                        .collection('users')
-                        .doc(_currentUser!.uid)
-                        .collection('leaveRequests')
-                        .add({
-                      'izinTipi': izinTipi,
-                      'izinGunSayisi': izinGunSayisi,
-                      'baslangicTarihi': selectedBaslangicTarihi,
-                      'bitisTarihi': selectedBitisTarihi,
-                      'izinAlmaNedeni': izinAlmaNedeni,
-                      'onay': onay,
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("İzin talebi başarıyla kaydedildi."),
-                      ),
-                    );
-                    // Başvuru başarılı mesajı veya işlem
-                    print(
-                        'İzin talebi başarıyla kaydedildi. ID: ${izinTalebiRef.id}');
-                  } catch (e) {
-                    // Başvuru hata mesajı veya işlem
-                    print('İzin talebi kaydedilirken bir hata oluştu: $e');
-                  }
+                  leaveButoon();
                 },
                 child: Text(
                   "Başvur",
@@ -405,7 +354,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           FloatingActionButton(
             onPressed: () {
-              Navigator.pushNamed(context, "/chatDm");
+              Navigator.pushNamed(context, "/groupPage");
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -450,6 +399,146 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  leaveButoon() async {
+    // // İzin talebi verilerini al
+    final String izinGunSayisi = izinGunSayisiController.text.trim();
+    final String izinAlmaNedeni = izinAlmaNedeniController.text.trim();
+
+    DateTime? selectedBaslangicTarihi = baslangicTarihi;
+    DateTime? selectedBitisTarihi = bitisTarihi;
+
+    if (izinTipi.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("İzin tipi kısmı boş bırakılamaz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    //
+    if (selectedBaslangicTarihi == null || selectedBitisTarihi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Başlangıç ve bitiş tarihlerini seçmelisiniz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final fark = selectedBitisTarihi.difference(selectedBaslangicTarihi);
+    final kalanGun = fark.inDays;
+
+    int izinGunSayisiInt = int.parse(izinGunSayisi);
+    if (izinGunSayisiInt != kalanGun) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("İzin alacağınız gün sayısını doğru giriniz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Başlangıç tarihi bitiş tarihinden önce veya aynı olmalıdır
+    if (selectedBaslangicTarihi == null ||
+        selectedBitisTarihi == null ||
+        selectedBaslangicTarihi.isAfter(selectedBitisTarihi)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Geçerli bir başlangıç ve bitiş tarihi seçmelisiniz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Başlangıç tarihi seçilen yıl ile güncel yıl arasında olmalıdır
+
+    final currentTime = DateTime.now();
+    final currentDay = currentTime.day;
+    final currentMonth = currentTime.month;
+    final currentYear = currentTime.year;
+
+    final baslangicDay = selectedBaslangicTarihi?.day ?? 0;
+    final baslangicMonth = selectedBaslangicTarihi?.month ?? 0;
+    final baslangicYear = selectedBaslangicTarihi?.year ?? 0;
+
+    final bitisDay = selectedBitisTarihi?.day ?? 0;
+    final bitisMonth = selectedBitisTarihi?.month ?? 0;
+    final bitisYear = selectedBitisTarihi?.year ?? 0;
+
+    if (bitisYear < currentYear ||
+        (bitisYear == currentYear && bitisMonth < currentMonth) ||
+        (bitisYear == currentYear &&
+            bitisMonth == currentMonth &&
+            bitisDay < currentDay) ||
+        baslangicYear < currentYear ||
+        (baslangicYear == currentYear && baslangicMonth < currentMonth) ||
+        (baslangicYear == currentYear &&
+            baslangicMonth == currentMonth &&
+            baslangicDay < currentDay)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Geçerli bir tarih giriniz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (izinAlmaNedeni.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("İzin alma nedeni kısmı boş bırakılamaz."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Timestamp baslangicTarihiTimestamp =
+        Timestamp.fromDate(selectedBaslangicTarihi!);
+    Timestamp bitisTarihiTimestamp = Timestamp.fromDate(selectedBitisTarihi!);
+
+    //String izinAlmaNedeni =  izinAlmaNedeni; // TextFormField'dan alınan değer
+
+    // Firestore'a izin talebi verilerini kaydet
+    try {
+      DocumentReference izinTalebiRef = await _firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('leaveRequests')
+          .add({
+        'izinTipi': izinTipi,
+        'izinGunSayisi': izinGunSayisi,
+        'baslangicTarihi': selectedBaslangicTarihi,
+        'bitisTarihi': selectedBitisTarihi,
+        'izinAlmaNedeni': izinAlmaNedeni,
+        'onay': onay,
+      });
+      setState(() {
+        izinTipi = '';
+        izinGunSayisiController.clear();
+        baslangicTarihi = null;
+        bitisTarihi = null;
+        izinAlmaNedeniController.clear();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("İzin talebi başarıyla kaydedildi."),
+          backgroundColor: Colors.green,
+        ),
+      );
+      // Başvuru başarılı mesajı veya işlem
+      print('İzin talebi başarıyla kaydedildi. ID: ${izinTalebiRef.id}');
+    } catch (e) {
+      // Başvuru hata mesajı veya işlem
+      print('İzin talebi kaydedilirken bir hata oluştu: $e');
+    }
   }
 }
 

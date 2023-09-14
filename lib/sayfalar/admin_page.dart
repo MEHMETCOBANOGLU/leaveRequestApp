@@ -87,7 +87,7 @@ class _adminPageState extends State<adminPage> {
             final userData =
                 snapshot.data?.data() as Map<String, dynamic>? ?? {};
             final String name = userData['name'] as String? ?? '';
-            final String department = userData['department'] as String? ?? '';
+            // final String department = userData['department'] as String? ?? '';
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,12 +253,12 @@ class _adminPageState extends State<adminPage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            // await authService.signOut();
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             const AktivationLogin()),
-                            //     (route) => false);
+                            await authService.signOut();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AktivationLogin()),
+                                (route) => false);
                           },
                           icon: const Icon(
                             Icons.done,

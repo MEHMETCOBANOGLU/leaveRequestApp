@@ -30,7 +30,7 @@ class HelperFunctions {
     return await sf.setString(userDepartmentKey, userDepartment);
   }
 
-  static Future<bool> saveRoolDepartmentSF(String userRool) async {
+  static Future<bool> saveUserRoolDepartmentSF(String userRool) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(userRoolKey, userRool);
   }
