@@ -2,15 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sayfalar/aktivationLogin.dart';
-import 'package:enelsis_app/sayfalar/group_page.dart';
 import 'package:enelsis_app/sayfalar/profile_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
-import 'package:enelsis_app/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'package:enelsis_app/sabitler/leaveCard.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class adminPage extends StatefulWidget {
   const adminPage({super.key});
@@ -24,8 +21,15 @@ class _adminPageState extends State<adminPage> {
   String username = "";
   String email = "";
   String department = "";
-  bool _isLoading = false;
   String groupName = "";
+  int userCount = 0;
+  int leaveCount = 0;
+  int approvedLeaveCount = 0;
+  int rejectLeaveCount = 0;
+  int zamanAraligindakiLeaveSayisi = 0;
+  int usernameCount = 0;
+  late List<GDPData> _chartData;
+  late TooltipBehavior _tooltipBehavior;
 
   late String password;
   final formkey = GlobalKey<FormState>();
@@ -36,7 +40,62 @@ class _adminPageState extends State<adminPage> {
   void initState() {
     super.initState();
     gettingUserData();
+    _tooltipBehavior = TooltipBehavior(enable: true);
+    getDatabaseInfo();
+    _chartData= getChartData();
   }
+
+  getDatabaseInfo()  {
+      DatabaseService().getUsersCount().then((val) {
+      setState(() {
+        userCount = val;
+        _chartData= getChartData();
+        print('userCount $userCount');
+      });
+    });
+
+     DatabaseService().getLeaveCount().then((val) {
+      setState(() {
+        leaveCount = val;
+        _chartData= getChartData();
+        print('leaveCount $leaveCount');
+      });
+    });
+    
+  DatabaseService().getApprovedLeaveCount().then((val) {
+      setState(() {
+        approvedLeaveCount = val;
+        _chartData= getChartData();
+        print('approvedLeaveCount $approvedLeaveCount');
+      });
+    });
+
+         DatabaseService().getRejectLeaveCount().then((val) {
+      setState(() {
+        rejectLeaveCount = val;
+        _chartData= getChartData();
+        print('rejectLeaveCount $rejectLeaveCount');
+      });
+    });
+    
+
+    DatabaseService().getLeaveRequestsInTimeRange().then((val) {
+      setState(() {
+        zamanAraligindakiLeaveSayisi = val;
+        _chartData= getChartData();
+        print('zamanAraligindakiLeaveSayisi $zamanAraligindakiLeaveSayisi');
+      });
+    });
+
+        DatabaseService().getUsernameCount().then((val) {
+      setState(() {
+        usernameCount = val;
+        _chartData= getChartData();
+        print('usernameCount $usernameCount');
+      });
+    });
+  }
+  
 
   gettingUserData() async {
     await HelperFunctions.getUserEmailFromSF().then((val) {
@@ -63,13 +122,6 @@ class _adminPageState extends State<adminPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     // Çıkış işlemi burada yapılabilir
-        //     Navigator.pop(context); // Geri dön
-        //   },
-        // ),
         title: StreamBuilder<DocumentSnapshot>(
           stream:
               _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
@@ -115,8 +167,6 @@ class _adminPageState extends State<adminPage> {
           // ),
         ],
       ),
-      ////////////////////////////////////////1.48.dk
-
       drawer: Drawer(
           child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 50),
@@ -203,20 +253,7 @@ class _adminPageState extends State<adminPage> {
               style: TextStyle(color: Colors.black),
             ),
           ),
-          ListTile(
-            onTap: () {
-              //Navigator.pushReplacementNamed(context, '/izinlerSayfasi');
-            },
-            selectedColor: Theme.of(context).primaryColor,
-            selected: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
-            title: const Text(
-              "Mesaj",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
+
           ListTile(
             onTap: () {
               Navigator.pushReplacementNamed(context, '/groupPage');
@@ -280,11 +317,22 @@ class _adminPageState extends State<adminPage> {
         ],
       )),
 
-      body: Container(
-        child: Text("merhaba mehmet"),
-      ),
-      //////////////////////////person_add_alt_1
-
+      body: SfCircularChart(
+        title: ChartTitle(text: 'PERSONEL DURUM GRAFİĞİ', textStyle: TextStyle(
+              color: renk(laci), fontWeight: FontWeight.bold, fontSize: 27),),
+        legend:  Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+        tooltipBehavior: _tooltipBehavior,
+        series: <CircularSeries>[
+        RadialBarSeries<GDPData, String>(
+          dataSource: _chartData,
+          xValueMapper: (GDPData data ,_) => data.continent,
+          yValueMapper: (GDPData data ,_) => data.gdp,
+          dataLabelSettings: DataLabelSettings(isVisible: true
+          ),
+          enableTooltip: true,
+          maximumValue: 50
+        )
+      ],),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -320,7 +368,26 @@ class _adminPageState extends State<adminPage> {
     );
   }
 
-//popUpDialog(BuildContext context) {}
+
+   List<GDPData> getChartData(){
+    final List<GDPData> chartData = [
+    GDPData("Reddedilen İzinler", rejectLeaveCount),
+    GDPData("Kabul Edilen İzinler", approvedLeaveCount),
+    GDPData("izinler", leaveCount),
+     GDPData("Aktivasyon İstekleri", usernameCount),
+     GDPData("İzinli Personel", zamanAraligindakiLeaveSayisi),
+     GDPData("Personel", userCount), 
+
+
+    ];
+    return chartData;
+   }
+}
+
+class GDPData{
+  GDPData(this.continent, this.gdp);
+  final String continent;
+  final int gdp;
 }
 
 ///////////////////////////////////////////////////

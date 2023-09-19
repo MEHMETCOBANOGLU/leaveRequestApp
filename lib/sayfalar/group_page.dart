@@ -79,11 +79,12 @@ class _GroupPageState extends State<GroupPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            if (rool == "Admin") {
-              Navigator.pushReplacementNamed(context, "/adminPage");
-            } else {
-              Navigator.pushReplacementNamed(context, "/homePage");
-            }
+           
+             if (rool == "Admin") {
+               Navigator.pushReplacementNamed(context, "/adminPage");
+             } else {
+               Navigator.pushReplacementNamed(context, "/homePage");
+             }
           },
         ),
         actions: [

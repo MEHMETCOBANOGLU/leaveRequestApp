@@ -4,6 +4,7 @@ import 'package:enelsis_app/service/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'core/services/auth_service2.dart';
 import 'firebase_options.dart';
@@ -32,13 +33,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // getUserLoggedInStatus();
-
-    // var _firebaseMessaging = FirebaseMessaging.instance;
-    // _firebaseMessaging.configure(
-    //     onMessage: (Map<String, dynamic> message) async {
-    //   print("onMessage: $message");
-    // });
+    getUserLoggedInStatus();
   }
 
   getUserLoggedInStatus() async {
@@ -53,26 +48,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) =>
-              AuthService(), //          create: (_) => AuthService(FirebaseAuth.instance),
+    return OverlaySupport(
+      child: MultiProvider(
+        providers: [
+          Provider<AuthService>(
+            create: (_) =>
+                AuthService(), //          create: (_) => AuthService(FirebaseAuth.instance),
+          ),
+          StreamProvider(
+            create: (context) => context.read<AuthService>().authStateChanges,
+            initialData: null,
+          ),
+        ],
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: MyRoutes.genrateRoute,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          initialRoute:
+              _isSignedIn ? '/adminPage' : "/", //conversationPagechatDm
         ),
-        StreamProvider(
-          create: (context) => context.read<AuthService>().authStateChanges,
-          initialData: null,
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: MyRoutes.genrateRoute,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        initialRoute: _isSignedIn ? '/adminPage' : "/", //conversationPagechatDm
       ),
     );
   }

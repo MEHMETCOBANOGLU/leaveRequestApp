@@ -7,6 +7,8 @@ class DatabaseService {
   // reference for our collections
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
+        final CollectionReference leaveRequestsCollection =
+      FirebaseFirestore.instance.collection("leaveRequests");
   final CollectionReference groupCollection =
       FirebaseFirestore.instance.collection("groups");
 
@@ -49,7 +51,7 @@ class DatabaseService {
     return userCollection.doc(uid).snapshots();
   }
 
-// creating a group
+ // creating a group
   Future ccreateGroup(String userName, String id, String groupName) async {
     DocumentReference groupDocumentReference = await groupCollection.add({
       "groupName": groupName,
@@ -215,4 +217,147 @@ class DatabaseService {
       "recentMessageTime": chatMessageData['time'].toString(),
     });
   }
+
+
+    // Kullanıcı sayısını elde etmek için bir fonksiyon
+   getUsersCount() async {
+    QuerySnapshot userDocs = await userCollection.get();
+    return userDocs.size; // Doküman sayısını döndürür
+  }
+
+   // Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içindeki "leaveRequests" koleksiyonlarının sayısını elde etmek için fonksiyon
+  Future<int> getLeaveCount() async {
+    int leaveCount = 0;
+    QuerySnapshot userDocs = await userCollection.get();
+    
+    for (QueryDocumentSnapshot userDoc in userDocs.docs) {
+      
+      CollectionReference leaveRequestsCollection =
+          userDoc.reference.collection("leaveRequests");
+      
+      QuerySnapshot leaveRequests = await leaveRequestsCollection.get();
+      
+      leaveCount += leaveRequests.size;
+    }
+  
+    return leaveCount;
+  }
+  
+  
+
+ // Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içindeki "leaveRequests" koleksiyonlarının
+// içindeki dokümantasyonların onay belgesi "ONAYLANDI" olanlarının sayısını elde etmek için fonksiyon
+Future<int> getApprovedLeaveCount() async {
+  int approvedLeaveCount = 0;
+
+  QuerySnapshot userDocs = await userCollection.get();
+
+
+  for (QueryDocumentSnapshot userDoc in userDocs.docs) {
+
+    CollectionReference leaveRequestsCollection =
+        userDoc.reference.collection("leaveRequests");
+
+    QuerySnapshot approvedLeaveRequests = await leaveRequestsCollection
+        .where("onay", isEqualTo: "ONAYLANDI")
+        .get();
+
+    approvedLeaveCount += approvedLeaveRequests.size;
+  }
+
+  return approvedLeaveCount;
 }
+
+  // Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içindeki "leaveRequests" koleksiyonlarının
+// içindeki dokümantasyonların onay belgesi "REDDEDİLDİ" olanlarının sayısını elde etmek için fonksiyon
+Future<int> getRejectLeaveCount() async {
+  int rejectLeaveCount = 0;
+
+  QuerySnapshot userDocs = await userCollection.get();
+
+
+  for (QueryDocumentSnapshot userDoc in userDocs.docs) {
+
+    CollectionReference leaveRequestsCollection =
+        userDoc.reference.collection("leaveRequests");
+
+    QuerySnapshot rejectLeaveRequests = await leaveRequestsCollection
+        .where("onay", isEqualTo: "REDDEDİLDİ")
+        .get();
+
+    rejectLeaveCount += rejectLeaveRequests.size;
+  }
+
+  return rejectLeaveCount;
+}
+
+// Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içindeki "leaveRequests" koleksiyonlarının
+// içindeki dokümantasyonların icindeki baslangicTarihi ve bitisTarihi bir zaman aralığı olsun
+//eger şu anki zaman o zaman aralığı içinde olursa bana bu  belgeye ait olan dökümasyonların sayısını döndür. 
+
+  Future<int> getLeaveRequestsInTimeRange() async {
+    int count = 0;
+
+    QuerySnapshot userDocs = await userCollection.get();
+
+    // Get the current time
+    DateTime currentTime = DateTime.now();
+
+    for (QueryDocumentSnapshot userDoc in userDocs.docs) {
+      CollectionReference leaveRequestsCollection =
+          userDoc.reference.collection("leaveRequests");
+
+      // Query for documents with "baslangicTarihi" less than or equal to the current time
+      QuerySnapshot startQuery = await leaveRequestsCollection
+          .where("baslangicTarihi", isLessThanOrEqualTo: currentTime)
+          .get();
+
+      // Query for documents with "bitisTarihi" greater than or equal to the current time
+      QuerySnapshot endQuery = await leaveRequestsCollection
+          .where("bitisTarihi", isGreaterThanOrEqualTo: currentTime)
+          .get();
+
+      // Combine the results of both queries
+      List<QueryDocumentSnapshot> startDocs = startQuery.docs;
+      List<QueryDocumentSnapshot> endDocs = endQuery.docs;
+
+      // Iterate through the documents in both queries to find common documents
+      for (QueryDocumentSnapshot startDoc in startDocs) {
+        for (QueryDocumentSnapshot endDoc in endDocs) {
+          if (startDoc.id == endDoc.id) {
+            count++;
+            break;
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+
+  // hey chatGpt SANA BIR SORUM OLACAK. Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içinde username belgesi var mi diye
+  // kontrol etmeni istiyorum eger yoksa sayisini elde etmek istiyorum
+
+    // Kullanıcı dokümantasyonlarının içinde "username" alanı yok mu ?kullanici aktivasyon sayisini belirtiyor bu
+  Future<int> getUsernameCount() async {
+    int usernameCount = 0;
+
+    QuerySnapshot userDocs = await userCollection.get();
+
+
+    for (QueryDocumentSnapshot userDoc in userDocs.docs) {
+      // Dokümantasyonun verilerini al
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      if (!userData.containsKey("username")) {
+        usernameCount++;
+      }
+    }
+
+    return usernameCount;
+  }
+}
+
+
+
+

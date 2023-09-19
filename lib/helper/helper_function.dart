@@ -59,6 +59,6 @@ class HelperFunctions {
 
   static Future<String?> getUserRoolFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
-    return sf.getString(userDepartmentKey);
+    return sf.getString(userRoolKey);
   }
 }
