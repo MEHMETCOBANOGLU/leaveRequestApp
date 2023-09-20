@@ -1,16 +1,18 @@
-import 'package:enelsis_app/sayfalar/chat_page.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/pages/chat_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class GroupTile extends StatefulWidget {
   final String username;
   final String groupId;
   final String groupName;
+  final String rool;
   const GroupTile(
       {Key? key,
       required this.groupId,
       required this.groupName,
-      required this.username})
+      required this.username,
+      required this.rool})
       : super(key: key);
 
   @override
@@ -50,11 +52,12 @@ class _GroupTileState extends State<GroupTile> {
             widget.groupName,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          subtitle: Text(
+          
+          subtitle: widget.rool == 'Admin' ? Text(
             '"${widget.groupName}" grubunu oluşturdunuz',
             // "Join the conversation as ${widget.username}",
             style: const TextStyle(fontSize: 13),
-          ),
+          ) : Text('"${widget.groupName}" grubuna katıldınız"'),
         ),
       ),
     );

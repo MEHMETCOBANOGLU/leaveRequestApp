@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sabitler/tema.dart';
+import 'package:enelsis_app/sabitler/theme.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,53 +25,22 @@ class _ActivationFormState extends State<ActivationForm> {
 /////////////////
   Tema tema = Tema();
   bool sifre_gozukme = true;
-  // burda dep kon rol
   late String user, email, password, name, department, nickName;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
-
-  // final _tEmail = TextEditingController();
-  // final _tPassword = TextEditingController();
 
   final _firestore = FirebaseFirestore.instance;
   void saveActivationDataToFirestore(
       String nickName, String password, String department) async {
     try {
+      HelperFunctions.saveUserDepartmentSF(department);
       DocumentReference userDocumentRef =
           FirebaseFirestore.instance.collection('users').doc(widget.userId);
-      // departmani da her iki tarafta guncelle mehemt ve admin_depatmen koleskiyonu olusmadi onu da hallet
-      //artik if else kontorlu yapmana gerek kalmayabilir
-      if (widget.rool == "Admin") {
-        // DocumentReference adminDepartments = await _firestore
-        //     .collection('users')
-        //     .doc(widget.userId)
-        //     .collection('admindepartment')
-        //     .add({
-        //   'password': password,
-        //   'username': nickName,
-        //   'department': department
-        // });
         await userDocumentRef.update({
           'password': password,
           'username': nickName,
           'department': department
         });
-      } else {
-        await userDocumentRef.update({
-          'password': password,
-          'username': nickName,
-          'department': department
-        });
-      }
-      // DocumentSnapshot userSnapshot = await userDocumentRef.get();
-
-      // if (userSnapshot.exists) {
-      //   Map<String, dynamic> existingData =
-      //       userSnapshot.data() as Map<String, dynamic>;
-      //   existingData['username'] = nickName;
-
-      //   await userDocumentRef.set(existingData);
-      // }
 
       print('Veriler başarıyla Firestore\'a kaydedildi.');
     } catch (e) {
@@ -86,7 +55,7 @@ class _ActivationFormState extends State<ActivationForm> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          padding: EdgeInsets.all(16), // ekran boyutunu ayarlamada cozebildim
+          padding: EdgeInsets.all(16), 
           decoration: BoxDecoration(color: renk(arka_renk)),
           child: SingleChildScrollView(
               child: Form(
@@ -111,7 +80,7 @@ class _ActivationFormState extends State<ActivationForm> {
                 ),
                 Container(
                   decoration:
-                      tema.inputBoxDec(), // temadan gelen box decaration
+                      tema.inputBoxDec(), 
                   margin:
                       EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                   padding:
@@ -137,7 +106,7 @@ class _ActivationFormState extends State<ActivationForm> {
                 ),
                 Container(
                   decoration:
-                      tema.inputBoxDec(), // temadan gelen box decaration
+                      tema.inputBoxDec(), 
                   margin:
                       EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                   padding:
@@ -179,7 +148,7 @@ class _ActivationFormState extends State<ActivationForm> {
                 ),
                 Container(
                   decoration:
-                      tema.inputBoxDec(), // temadan gelen box decaration
+                      tema.inputBoxDec(), 
                   margin:
                       EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 15),
                   padding:
@@ -201,7 +170,7 @@ class _ActivationFormState extends State<ActivationForm> {
                           decoration: tema.inputDec(
                               "Şifre Giriniz",
                               Icons
-                                  .lock_outline), // burda tema.darttaki input giris alani yer aliyor
+                                  .lock_outline), 
                           style: GoogleFonts.quicksand(
                             color: renk(metin_renk),
                             letterSpacing: 3,
@@ -254,15 +223,14 @@ class _ActivationFormState extends State<ActivationForm> {
                           Navigator.pop(context);
                           print(UserResult.user!.uid);
                           print(UserResult.user!.email);
-                          await HelperFunctions.saveUserDepartmentSF(
-                              department);
+                           //HelperFunctions.saveUserDepartmentSF(department);
                           saveActivationDataToFirestore(
                               nickName, password, department);
                         } catch (e) {
                           print(e.toString());
                         }
                       } else {
-                        // Validation failed
+                       
                       }
                     },
                     child: Center(
@@ -280,9 +248,8 @@ class _ActivationFormState extends State<ActivationForm> {
                   child: Center(
                     child: TextButton(
                       onPressed: () =>
-                          print(widget.rool), // Navigator.pushReplacementNamed(
-                      //     context, "/aktivationLogin"),
-                      //print(widget.userId),
+                        Navigator.pushReplacementNamed(
+                           context, "/aktivationLogin"),
                       child: Text(
                         "Bir önceki sayfaya geri dön",
                       ),
@@ -297,14 +264,3 @@ class _ActivationFormState extends State<ActivationForm> {
     );
   }
 }
-
-// //Kullanıcının Firestore'a verilerini kaydetme
-// void saveActivationDataToFirestore(String nickName, String password) async {
-//   CollectionReference usersCollection = FirebaseFirestore.instance
-//       .collection('users')
-//       .doc(widget.userId) as CollectionReference<Object?>;
-//   await usersCollection.doc(widget.userId).set({
-//     'kullanıcı-Adı': nickName,
-//     'password': password,
-//   });
-// }

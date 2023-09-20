@@ -61,37 +61,37 @@ class LeaveCard extends StatelessWidget {
             Text('Bitiş Tarihi: ${dateFormat.format(bitisTarihi)}'),
             Text('İzin Alma Nedeni: $izinAlmaNedeni'),
             Text('Onay: $onay'),
-            SizedBox(height: 8), // Add some spacing between text and buttons
+            SizedBox(height: 8), 
             Row(
               crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align buttons to the top
+                  CrossAxisAlignment.start, 
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple), // Arka plan rengi
+                        Colors.purple), 
                   ),
                   onPressed: onApprove,
                   child: Text('Onayla',
                       style: TextStyle(
                           color: Colors.white, fontStyle: FontStyle.italic)),
                 ),
-                SizedBox(width: 8), // Add some spacing between buttons
+                SizedBox(width: 8), 
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple), // Arka plan rengi
+                        Colors.purple), 
                   ),
                   onPressed: onReject,
                   child: Text('Reddet',
                       style: TextStyle(
                           color: Colors.white, fontStyle: FontStyle.italic)),
                 ),
-                SizedBox(width: 8), // Add some spacing between buttons
+                SizedBox(width: 8), 
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.purple), // Arka plan rengi
+                        Colors.purple), 
                   ),
                   onPressed: onMessage,
                   child: Text('Mesaj',
@@ -102,7 +102,7 @@ class LeaveCard extends StatelessWidget {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 255, 0, 0)), // Arka plan rengi
+                        Color.fromARGB(255, 255, 0, 0)), 
                   ),
                   onPressed: onDelete,
                   child: Text('sil',

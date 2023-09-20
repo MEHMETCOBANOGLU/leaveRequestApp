@@ -10,6 +10,7 @@ class LeaveCardU extends StatelessWidget {
   final String izinAlmaNedeni;
   final String name;
   final String department;
+    final String onay;
   final VoidCallback onDelete;
 
   const LeaveCardU({
@@ -21,6 +22,7 @@ class LeaveCardU extends StatelessWidget {
     required this.izinAlmaNedeni,
     required this.name,
     required this.department,
+     required this.onay,
     required this.onDelete,
   }) : super(key: key);
 
@@ -52,6 +54,7 @@ class LeaveCardU extends StatelessWidget {
             Text('Başlangıç Tarihi: ${dateFormat.format(baslangicTarihi)}'),
             Text('Bitiş Tarihi: ${dateFormat.format(bitisTarihi)}'),
             Text('İzin Alma Nedeni: $izinAlmaNedeni'),
+            Text('Onay Durumu: $onay'),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

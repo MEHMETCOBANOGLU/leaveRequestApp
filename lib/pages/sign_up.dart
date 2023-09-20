@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sabitler/tema.dart';
+import 'package:enelsis_app/sabitler/theme.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -161,32 +161,32 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                     ),
-                    Container(
-                      decoration:
-                          tema.inputBoxDec(), // temadan gelen box decaration
-                      margin: EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 10),
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 5, bottom: 5),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "bilgileri eksiksiz doldurunuz";
-                          } else {}
-                          return null;
-                        },
-                        onSaved: (value) {
-                          department = value!;
-                        },
-                        decoration: tema.inputDec(
-                            "Departmanınızı Giriniz",
-                            Icons
-                                .logo_dev_sharp), // burda tema.darttaki input giris alani yer aliyor
-                        style: GoogleFonts.quicksand(
-                          color: renk(metin_renk),
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   decoration:
+                    //       tema.inputBoxDec(), // temadan gelen box decaration
+                    //   margin: EdgeInsets.only(
+                    //       left: 10, right: 10, top: 10, bottom: 10),
+                    //   padding: EdgeInsets.only(
+                    //       left: 15, right: 15, top: 5, bottom: 5),
+                    //   child: TextFormField(
+                    //     validator: (value) {
+                    //       if (value!.isEmpty) {
+                    //         return "bilgileri eksiksiz doldurunuz";
+                    //       } else {}
+                    //       return null;
+                    //     },
+                    //     onSaved: (value) {
+                    //       department = value!;
+                    //     },
+                    //     decoration: tema.inputDec(
+                    //         "Departmanınızı Giriniz",
+                    //         Icons
+                    //             .logo_dev_sharp), // burda tema.darttaki input giris alani yer aliyor
+                    //     style: GoogleFonts.quicksand(
+                    //       color: renk(metin_renk),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 20,
                     ),
@@ -332,7 +332,7 @@ class _SignUpState extends State<SignUp> {
             await HelperFunctions.saveUserLoggedInStatus(true);
             await HelperFunctions.saveUserEmailSF(email);
             await HelperFunctions.saveUserNameSF(name);
-            await HelperFunctions.saveUserDepartmentSF(department);
+            //await HelperFunctions.saveUserDepartmentSF(department);
             await HelperFunctions.saveUserRoolDepartmentSF(rool);
             Navigator.pushReplacementNamed(context, "/");
           } else {

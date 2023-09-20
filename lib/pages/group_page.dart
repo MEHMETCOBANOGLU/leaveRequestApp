@@ -1,6 +1,6 @@
 import 'package:enelsis_app/helper/helper_function.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
-import 'package:enelsis_app/sayfalar/search_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
+import 'package:enelsis_app/pages/search_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/group_tile.dart';
@@ -222,7 +222,8 @@ class _GroupPageState extends State<GroupPage> {
                   return GroupTile(
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
-                      username: snapshot.data['username']);
+                      username: snapshot.data['username'],
+                       rool: snapshot.data['rool']);
                 },
               );
             } else {

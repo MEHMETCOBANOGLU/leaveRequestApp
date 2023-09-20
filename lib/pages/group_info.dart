@@ -1,5 +1,5 @@
-import 'package:enelsis_app/sayfalar/admin_page.dart';
-import 'package:enelsis_app/sayfalar/home_page.dart';
+import 'package:enelsis_app/pages/admin_page.dart';
+import 'package:enelsis_app/pages/home_page.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

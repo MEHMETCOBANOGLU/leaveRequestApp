@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
-import 'package:enelsis_app/sayfalar/chat_page.dart';
+import 'package:enelsis_app/pages/chat_page.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -35,36 +35,35 @@ class ActivationCard extends StatelessWidget {
                   fontStyle: FontStyle.italic,
                   color: Colors.blue[400]),
             ),
-            Text('Departman: $department'),
             Text('e-mail: $email'),
             Text('rol: $rool'),
-            SizedBox(height: 8), // Add some spacing between text and buttons
+            SizedBox(height: 8), 
             Row(
               crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align buttons to the top
+                  CrossAxisAlignment.start, 
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromARGB(255, 0, 246, 78)), // Arka plan rengi
+                        Color.fromARGB(255, 0, 246, 78)), 
                   ),
                   onPressed: onApprove,
                   child: Text('Aktivasyon',
                       style: TextStyle(
                           color: Colors.white, fontStyle: FontStyle.italic)),
                 ),
-                SizedBox(width: 8), // Add some spacing between buttons
+                SizedBox(width: 8), 
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.red), // Arka plan rengi
+                        Colors.red), 
                   ),
                   onPressed: onReject,
                   child: Text('Reddet',
                       style: TextStyle(
                           color: Colors.white, fontStyle: FontStyle.italic)),
                 ),
-                SizedBox(width: 8), // Add some spacing between buttons
+                SizedBox(width: 8), 
               ],
             ),
           ],

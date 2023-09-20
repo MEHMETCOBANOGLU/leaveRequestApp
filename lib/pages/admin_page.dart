@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sayfalar/aktivationLogin.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/pages/aktivationLogin.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -36,16 +36,18 @@ class _adminPageState extends State<adminPage> {
   final firebaseAuth = FirebaseAuth.instance;
   AuthService authService = AuthService();
 
+  
   @override
-  void initState() {
-    super.initState();
+  void initState()  {
+     super.initState();
     gettingUserData();
     _tooltipBehavior = TooltipBehavior(enable: true);
-    getDatabaseInfo();
-    _chartData= getChartData();
+     getDatabaseInfo();
+     _chartData=  getChartData();
   }
 
   getDatabaseInfo()  {
+
       DatabaseService().getUsersCount().then((val) {
       setState(() {
         userCount = val;
@@ -121,35 +123,7 @@ class _adminPageState extends State<adminPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: renk(laci),
-        title: StreamBuilder<DocumentSnapshot>(
-          stream:
-              _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-
-            if (snapshot.hasError) {
-              return Text(
-                  'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-            }
-
-            final userData =
-                snapshot.data?.data() as Map<String, dynamic>? ?? {};
-            final String name = userData['name'] as String? ?? '';
-            // final String department = userData['department'] as String? ?? '';
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: TextStyle(fontSize: 18)),
-                Text(department, style: TextStyle(fontSize: 14)),
-              ],
-            );
-          },
-        ),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
@@ -159,12 +133,6 @@ class _adminPageState extends State<adminPage> {
               child: Image.asset("assets/enelsis_logo2.png"),
             ),
           ),
-          // IconButton(
-          //   icon: Icon(Icons.logout),
-          //   onPressed: () {
-          //     // Çıkış işlemi burada yapılabilir
-          //   },
-          // ),
         ],
       ),
       drawer: Drawer(
@@ -242,7 +210,7 @@ class _adminPageState extends State<adminPage> {
             ),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () { Navigator.pushReplacementNamed(context, '/adminPage'); },
             selectedColor: Theme.of(context).primaryColor,
             selected: true,
             contentPadding:
@@ -330,53 +298,19 @@ class _adminPageState extends State<adminPage> {
           dataLabelSettings: DataLabelSettings(isVisible: true
           ),
           enableTooltip: true,
-          maximumValue: 50
+          maximumValue: userCount.toDouble() + 4
         )
       ],),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.add_task_outlined),
-              onPressed: () {
-                Navigator.pushNamed(context, '/leavePage');
-              },
-            ),
-            label: 'İzinler',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.person_add_alt_1),
-              onPressed: () {
-                Navigator.pushNamed(context, '/usersActivation');
-              },
-            ),
-            label: 'Kullanıcı Aktivasyon',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.message),
-              onPressed: () {
-                Navigator.pushNamed(context, '/chatDm');
-              },
-            ),
-            label: 'Mesaj ',
-          ),
-        ],
-        //selectedItemColor: Colors.blue,
-      ),
     );
   }
-
-
    List<GDPData> getChartData(){
     final List<GDPData> chartData = [
     GDPData("Reddedilen İzinler", rejectLeaveCount),
     GDPData("Kabul Edilen İzinler", approvedLeaveCount),
     GDPData("izinler", leaveCount),
-     GDPData("Aktivasyon İstekleri", usernameCount),
-     GDPData("İzinli Personel", zamanAraligindakiLeaveSayisi),
-     GDPData("Personel", userCount), 
+    GDPData("Aktivasyon İstekleri", usernameCount),
+    GDPData("İzinli Personel", zamanAraligindakiLeaveSayisi),
+    GDPData("Personel", userCount), 
 
 
     ];
@@ -390,5 +324,5 @@ class GDPData{
   final int gdp;
 }
 
-///////////////////////////////////////////////////
+
 

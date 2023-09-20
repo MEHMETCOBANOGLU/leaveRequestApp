@@ -62,3 +62,18 @@ class HelperFunctions {
     return sf.getString(userRoolKey);
   }
 }
+
+
+
+// SharedPreferences kütüphanesi kullanarak kullanıcı verilerini (giriş durumu, kullanıcı adı, e-posta, bölüm ve rol gibi) 
+//cihazda depolamak ve geri almak için kullanılır. SharedPreferences, küçük miktarlarda yapılandırma veya kullanıcı verisi gibi
+// basit verileri cihazda kalıcı olarak saklamak için kullanılır.
+
+// Kullanıcının giriş durumunu (logged in veya logged out) depolamak ve geri almak için saveUserLoggedInStatus ve 
+//getUserLoggedInStatus işlevlerini sağlar.
+// Kullanıcı adını (userNameKey), e-posta adresini (userEmailKey), bölümü (userDepartmentKey) ve rolü (userRoolKey) depolamak ve
+// geri almak için ilgili işlevleri sağlar. Bu işlevler, kullanıcının uygulama içindeki profil bilgilerini ve ayarlarını 
+//depolamak için kullanılabilir.
+//kullanıcı giriş yaptığında saveUserLoggedInStatus işlevi kullanılarak giriş durumu kaydedilir ve kullanıcı bilgileri 
+//saklanabilir. Bu bilgilere ihtiyaç duyulduğunda da getUserLoggedInStatus ve diğer işlevler kullanılarak geri alınabilir.
+// Bu şekilde, kullanıcı verileri uygulama oturumu boyunca veya cihaz yeniden başlatıldığında dahi korunmuş olur.

@@ -81,12 +81,14 @@ class _UsersActivationState extends State<UsersActivation> {
               String email = userSnapshot["email"] as String? ?? "";
               String rool = userSnapshot["rool"] as String? ?? "";
               String department = userSnapshot["department"] as String? ?? "";
+              String uid = userSnapshot["uid"] as String? ?? "";
               Map<String, dynamic>? userData =
                   userSnapshot.data() as Map<String, dynamic>?;
               bool hasUsername = userData?.containsKey("username") ?? false;
 
-              if (!hasUsername) {
+              if ((!hasUsername) && (rool == 'Üye')) {
                 // "username" alanı yoksa, ActivationCard ekleyin
+                
                 widgets.add(
                   ActivationCard(
                     name: name,
@@ -98,20 +100,29 @@ class _UsersActivationState extends State<UsersActivation> {
                       Navigator.pushNamed(context, '/activationForm',
                           arguments: {'userId': userId, 'rool': rool});
                     },
-                    onReject: () {
-                      print(department);
+                    onReject: () async {
+                                               
+                                 await  _firestore.collection('users')
+                                     .doc(uid)
+                                     .delete()
+                            .then((_) {
+                          print('Kullanıcı aktivasyonu reddedildi.');
+                        }).catchError((error) {
+                         
+                          print(
+                              'Kullanıcı aktivasyonu reddedilirken bir hata oluştu: $error');
+                        });
+
+
                     },
                   ),
                 );
               }
             }
-
             if (widgets.isEmpty) {
-              // Hiç "username" olmayan kullanıcı yoksa, noGroupWidget ekleyin
+
               widgets.add(noGroupWidget());
             }
-
-            // Listeyi ListView.builder'a döndürün
             return ListView.builder(
               itemCount: widgets.length,
               itemBuilder: (context, index) {

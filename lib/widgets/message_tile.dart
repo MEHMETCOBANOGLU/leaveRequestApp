@@ -1,3 +1,4 @@
+import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:flutter/material.dart';
 
 class MessageTile extends StatefulWidget {
@@ -46,7 +47,7 @@ class _MessageTileState extends State<MessageTile> {
                   ),
             color: widget.sentByMe
                 ? Theme.of(context).primaryColor
-                : Colors.grey[700]),
+                : renk(bubble)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

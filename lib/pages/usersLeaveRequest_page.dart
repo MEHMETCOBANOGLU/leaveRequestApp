@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/sabitler/leaveCardUsers.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -116,6 +116,7 @@ class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
                         Timestamp.now();
                 String izinAlmaNedeni =
                     leaveSnapshot["izinAlmaNedeni"] as String? ?? "";
+                String onay = leaveSnapshot['onay'] as String? ?? "";   
 
                 // Kullanıcının belgesinden izin talebi çekerken kullanılan userId
 
@@ -145,6 +146,7 @@ class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
                       izinAlmaNedeni: izinAlmaNedeni,
                       name: name,
                       department: department,
+                      onay: onay, 
                       onDelete: () {
                         // Firestore'dan izni silme işlemini gerçekleştirin
                         _firestore

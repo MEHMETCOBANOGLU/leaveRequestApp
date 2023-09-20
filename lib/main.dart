@@ -1,12 +1,16 @@
 import 'package:enelsis_app/helper/helper_function.dart';
+import 'package:enelsis_app/pages/admin_page.dart';
+import 'package:enelsis_app/pages/aktivationLogin.dart';
+import 'package:enelsis_app/pages/home_page.dart';
+import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/myRouters.dart';
 import 'package:enelsis_app/service/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
-import 'core/services/auth_service2.dart';
 import 'firebase_options.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,13 +34,23 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   bool _isSignedIn = false;
+    String rool = "";
+    final firebaseAuth = FirebaseAuth.instance;
+     AuthService authService = AuthService();
   @override
   void initState() {
-    super.initState();
     getUserLoggedInStatus();
+     gettingUserData();
+    super.initState();
   }
-
-  getUserLoggedInStatus() async {
+    gettingUserData() async {
+    await HelperFunctions.getUserRoolFromSF().then((val) {
+      setState(() {
+        rool = val!;
+      });
+    });
+  }
+    getUserLoggedInStatus() async {
     await HelperFunctions.getUserLoggedInStatus().then((value) {
       if (value != null) {
         setState(() {
@@ -45,7 +59,6 @@ class _MyAppState extends State<MyApp> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return OverlaySupport(
@@ -53,7 +66,7 @@ class _MyAppState extends State<MyApp> {
         providers: [
           Provider<AuthService>(
             create: (_) =>
-                AuthService(), //          create: (_) => AuthService(FirebaseAuth.instance),
+                AuthService(), 
           ),
           StreamProvider(
             create: (context) => context.read<AuthService>().authStateChanges,
@@ -65,11 +78,11 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           onGenerateRoute: MyRoutes.genrateRoute,
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: renk(laci)),
             useMaterial3: true,
           ),
-          initialRoute:
-              _isSignedIn ? '/adminPage' : "/", //conversationPagechatDm
+          home: 
+              _isSignedIn ?  rool == "Admin" ?  const adminPage() : const HomePage() :  const AktivationLogin(), 
         ),
       ),
     );

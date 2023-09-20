@@ -1,5 +1,5 @@
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sabitler/tema.dart';
+import 'package:enelsis_app/sabitler/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

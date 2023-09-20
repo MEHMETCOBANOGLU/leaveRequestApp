@@ -3,8 +3,8 @@ import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/model/pushnotification_model.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/notification_badge.dart';
-import 'package:enelsis_app/sabitler/tema.dart';
-import 'package:enelsis_app/sayfalar/sign_up.dart';
+import 'package:enelsis_app/sabitler/theme.dart';
+import 'package:enelsis_app/pages/sign_up.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
@@ -30,11 +30,12 @@ class _AktivationLoginState extends State<AktivationLogin> {
 
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
-  bool userIsAdmin = false; // Varsayılan olarak kullanıcı admin değil
+  bool userIsAdmin = false; 
   bool _isLoading = false;
   final emailController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  late  String name = "";
 
   late final FirebaseMessaging _messaging;
   late int _totalNotificationCounter;
@@ -129,7 +130,6 @@ class _AktivationLoginState extends State<AktivationLogin> {
     registerNotification();
     // when app is terminated state
     checkForInitialMessage();
-    //46.dk
     _totalNotificationCounter = 0;
     super.initState();
   }
@@ -164,19 +164,11 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                 child: Image.asset("assets/enelsis_logo2.png"),
                               ),
                             ),
-                            // Container(
-                            //   margin: EdgeInsets.only(top: 5, bottom: 5),
-                            //   child: Text("İzin Alma Sistemi",
-                            //       style: GoogleFonts.bebasNeue(
-                            //         color: renk(laci),
-                            //         fontSize: 30,
-                            //       )),
-                            // ),
                             Container(
                               margin: EdgeInsets.only(
                                   left: 10, right: 10, top: 10, bottom: 10),
                               decoration: tema
-                                  .inputBoxDec(), // temadan gelen box decaration
+                                  .inputBoxDec(),
                               padding: EdgeInsets.only(
                                   left: 15, right: 15, top: 5, bottom: 5),
                               child: TextFormField(
@@ -185,10 +177,13 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                 decoration: tema.inputDec(
                                     "Kullanıcı Adınızı Giriniz",
                                     Icons
-                                        .people_alt_outlined), // burda tema.darttaki input giris alani yer aliyor
+                                        .people_alt_outlined), 
                                 style: GoogleFonts.quicksand(
                                   color: renk(metin_renk),
                                 ),
+                                //    onSaved: (value) {
+                                //    name = value!;
+                                //  },
                                 validator: (val) {
                                   return RegExp(
                                               r"^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){0,18}[a-zA-Z0-9]$")
@@ -200,7 +195,7 @@ class _AktivationLoginState extends State<AktivationLogin> {
                             ),
                             Container(
                               decoration: tema
-                                  .inputBoxDec(), // temadan gelen box decaration
+                                  .inputBoxDec(),  
                               margin: EdgeInsets.only(
                                   left: 10, right: 10, top: 5, bottom: 15),
                               padding: EdgeInsets.only(
@@ -215,7 +210,7 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                       decoration: tema.inputDec(
                                           "Şifre Giriniz",
                                           Icons
-                                              .lock_outline), // burda tema.darttaki input giris alani yer aliyor
+                                              .lock_outline), 
                                       style: GoogleFonts.quicksand(
                                         color: renk(metin_renk),
                                         letterSpacing: 3,
@@ -246,8 +241,10 @@ class _AktivationLoginState extends State<AktivationLogin> {
                               onTap: () async {
                                 final String username =
                                     usernameController.text.trim();
+                                    print(username);
                                 final String password =
                                     passwordController.text.trim();
+
                                 if (formkey.currentState!.validate()) {
                                   formkey.currentState!.save();
                                   if (username.isEmpty) {
@@ -262,33 +259,36 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                           .where("username", isEqualTo: username)
                                           .get();
                                       if (snap.size > 0) {
-                                        String userRole = snap.docs[0][
-                                            'rool']; // 'rool' -> 'role' olarak düzeltilmiş
-                                        if (userRole == "Admin") {
-                                          Navigator.pushReplacementNamed(
-                                              context, "/adminPage");
-                                        } else {
-                                          Navigator.pushReplacementNamed(
-                                              context, "/homePage");
-                                        }
-                                      } else {
-                                        print('User not found');
-                                      }
+
+                                           String email = snap.docs[0]['email'];
+                                           String name = snap.docs[0]['name']; 
+                                           String department = snap.docs[0]['department']; 
+                                           String rool = snap.docs[0]['rool']; 
+                                        
+                                           await HelperFunctions.saveUserLoggedInStatus(true);
+                                           await HelperFunctions.saveUserEmailSF(email);
+                                           await HelperFunctions.saveUserNameSF(name);
+                                           await HelperFunctions.saveUserDepartmentSF(department);
+                                           await HelperFunctions.saveUserRoolDepartmentSF(rool);
+
                                       try {
                                         final userResult = await firebaseAuth
-                                            .signInWithEmailAndPassword(
-                                          email: snap.docs[0]['email'],
+                                          .signInWithEmailAndPassword(
+                                          email: email,
                                           password: password,
                                         );
                                         print(userResult.user!.uid);
-                                        // context.read<AuthService>().login(
-                                        //       snap.docs[0]
-                                        //           ['email'], // İlk belgenin emailini alıyor
-                                        //       password,
-                                        //     );
                                       } catch (e) {
                                         print(e.toString());
                                       }
+                                      if (rool == "Admin") {
+                                        Navigator.pushReplacementNamed(context, "/adminPage");
+                                      } else {
+                                        Navigator.pushReplacementNamed(context, "/homePage");
+                                      }
+                                    } else {
+                                      print('Kullanıcı bulunamadı');
+                                    }
                                     }
                                   }
                                 }
@@ -335,18 +335,6 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                 ],
                               )),
                             ),
-
-                            // Container(
-                            //   child: Center(
-                            //     child: TextButton(
-                            //       onPressed: () =>
-                            //           Navigator.pushNamed(context, "/signUp"),
-                            //       child: Text(
-                            //         "kayıt Ol",
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                             SizedBox(height: 8),
                             Text.rich(TextSpan(
                               text: "Root admin girişi için ",
@@ -365,40 +353,29 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                       }),
                               ],
                             )),
-                            // SizedBox(height: 1),
-                            // Container(
-                            //   child: Center(
-                            //     child: TextButton(
-                            //       onPressed: () =>
-                            //           Navigator.pushNamed(context, "/rootAdmin"),
-                            //       child: Text(
-                            //         "ROOT ADMIN",
-                            //       ),
-                            //     ),
-                            //   ),
-                            // )
-                            SizedBox(height: 12),
-                            NotificationBadege(
-                              totalNotification: _totalNotificationCounter,
-                            ),
-                            //if notification info is not null
-                            _notificationInfo != null
-                                ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                        Text(
-                                            'TITLE: ${_notificationInfo!.dataTitle ?? _notificationInfo!.title}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
-                                        SizedBox(height: 9),
-                                        Text(
-                                            'BODY: ${_notificationInfo!.dataBody ?? _notificationInfo!.body}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16))
-                                      ])
-                                : Container()
+                               // bildirim icin devam edicem bu kisma sonra
+                            // SizedBox(height: 12),
+                            // NotificationBadege(
+                            //   totalNotification: _totalNotificationCounter,
+                            // ),
+                            // //if notification info is not null
+                            // _notificationInfo != null
+                            //     ? Column(
+                            //         crossAxisAlignment: CrossAxisAlignment.center,
+                            //         children: [
+                            //             Text(
+                            //                 'TITLE: ${_notificationInfo!.dataTitle ?? _notificationInfo!.title}',
+                            //                 style: TextStyle(
+                            //                     fontWeight: FontWeight.bold,
+                            //                     fontSize: 16)),
+                            //             SizedBox(height: 9),
+                            //             Text(
+                            //                 'BODY: ${_notificationInfo!.dataBody ?? _notificationInfo!.body}',
+                            //                 style: TextStyle(
+                            //                     fontWeight: FontWeight.bold,
+                            //                     fontSize: 16))
+                            //           ])
+                            //     : Container()
                           ],
                         ),
                       )),
@@ -407,62 +384,5 @@ class _AktivationLoginState extends State<AktivationLogin> {
       ),
     );
   }
-
-  // login() async {
-  //   if (formkey.currentState!.validate()) {
-  //     formkey.currentState!.save();
-  //     setState(() {
-  //       _isLoading = false;
-  //       email = emailController.text;
-  //       username = usernameController.text;
-  //       password = passwordController.text.trim();
-  //     });
-  //     await authService.loginWithUserNameandPassword(email, password).then(
-  //       (value) async {
-  //         if (value == true) {
-  //           QuerySnapshot snapshot = await DatabaseService(
-  //                   uid: FirebaseAuth.instance.currentUser!.uid)
-  //               .gettingUserData(email);
-  //           // saving the values to our shared preferences
-  //           await HelperFunctions.saveUserLoggedInStatus(true);
-  //           await HelperFunctions.saveUserEmailSF(email);
-  //           await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
-
-  //           Navigator.pushReplacementNamed(context, "/");
-  //         } else {
-  //           showSnackbar(context, Colors.red, value);
-
-  //           setState(() {
-  //             _isLoading = false;
-  //           });
-  //         }
-  //       },
-  //     );
-  //   }
-  // }
 }
 
-// Navigator.pushReplacementNamed(
-//   context,
-//   '/homePage',
-//   arguments: email,
-// );
-
-// void route(BuildContext context) {
-//   User? user = FirebaseAuth.instance.currentUser;
-//   var kk = FirebaseFirestore.instance
-//       .collection('users')
-//       .doc(user!.uid)
-//       .get()
-//       .then((DocumentSnapshot documentSnapshot) {
-//     if (documentSnapshot.exists) {
-//       if (documentSnapshot.get('rool') == "Admin") {
-//         Navigator.pushReplacementNamed(context, "/adminPage");
-//       } else {
-//         Navigator.pushReplacementNamed(context, "/homePage");
-//       }
-//     } else {
-//       print('Document does not exist on the database');
-//     }
-//   });
-// }

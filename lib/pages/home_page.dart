@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
+import 'package:enelsis_app/pages/aktivationLogin.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
+import 'package:enelsis_app/service/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../sabitler/tema.dart';
+import '../sabitler/theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   String department = "";
   final izinGunSayisiController = TextEditingController();
   final izinAlmaNedeniController = TextEditingController();
+  AuthService authService = AuthService();
 
   @override
   void initState() {
@@ -75,35 +78,6 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
               color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
-        // title: StreamBuilder<DocumentSnapshot>(
-        //   stream:
-        //       _firestore.collection('users').doc(_currentUser?.uid).snapshots(),
-        //   builder:
-        //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return CircularProgressIndicator();
-        //     }
-
-        //     if (snapshot.hasError) {
-        //       return Text(
-        //           'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-        //     }
-        //     print(_currentUser!.uid);
-        //     final userData =
-        //         snapshot.data?.data() as Map<String, dynamic>? ?? {};
-        //     final String name = userData['name'] as String? ?? '';
-        //     final String department = userData['department'] as String? ?? '';
-
-        //     return Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         Text(name, style: TextStyle(fontSize: 18)),
-        //         Text(department, style: TextStyle(fontSize: 14)),
-        //       ],
-        //     );
-        //   },
-
-        // ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
@@ -212,12 +186,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            // await authService.signOut();
-                            // Navigator.of(context).pushAndRemoveUntil(
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             const AktivationLogin()),
-                            //     (route) => false);
+                            await authService.signOut();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AktivationLogin()),
+                                (route) => false);
                           },
                           icon: const Icon(
                             Icons.done,
@@ -373,7 +347,7 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: renk(laci),
           ),
           SizedBox(
-              width: 16), // Boşluk bırakmak için SizedBox kullanabilirsiniz
+              width: 16), 
           FloatingActionButton(
             onPressed: () {
               Navigator.pushNamed(context, "/usersLeaveRequest");
@@ -392,8 +366,6 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-
-            //child: Icon(Icons.assignment_turned_in_sharp),
             backgroundColor: renk(laci),
           ),
         ],
@@ -402,7 +374,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   leaveButoon() async {
-    // // İzin talebi verilerini al
+    // İzin talebi verilerini al
     final String izinGunSayisi = izinGunSayisiController.text.trim();
     final String izinAlmaNedeni = izinAlmaNedeniController.text.trim();
 
@@ -542,7 +514,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-///////////////////////////////////////////////////
 
 
   

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/sayfalar/aktivationLogin.dart';
-import 'package:enelsis_app/sayfalar/group_page.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
+import 'package:enelsis_app/pages/aktivationLogin.dart';
+import 'package:enelsis_app/pages/group_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
@@ -288,14 +288,6 @@ class _LeavePageState extends State<LeavePage> {
                                                 setState(() {
                                                   _isLoading = true;
                                                 });
-                                                // await DatabaseService(
-                                                //         uid: FirebaseAuth.instance
-                                                //             .currentUser!.uid)
-                                                //     .createGroup(
-                                                //         username,
-                                                //         FirebaseAuth.instance
-                                                //             .currentUser!.uid,
-                                                //         groupName);
                                                 String newGroupId =
                                                     await DatabaseService(
                                                             uid: FirebaseAuth
@@ -339,18 +331,16 @@ class _LeavePageState extends State<LeavePage> {
                                   });
                             },
                             onDelete: () async {
-                              print('current department $department');
-                              print('leave card department $leavedepartment');
-                              // try {
-                              //   await userSnapshot.reference
-                              //       .collection('leaveRequests')
-                              //       .doc(leaveDoc.id)
-                              //       .delete();
-                              //   print('Kullanıcının izin belgesi silindi.');
-                              // } catch (error) {
-                              //   print(
-                              //       'Kullanıcının izin belgesi silinirken bir hata oluştu: $error');
-                              // }
+                               try {
+                                 await userSnapshot.reference
+                                     .collection('leaveRequests')
+                                     .doc(leaveDoc.id)
+                                     .delete();
+                                 print('Kullanıcının izin belgesi silindi.');
+                               } catch (error) {
+                                 print(
+                                     'Kullanıcının izin belgesi silinirken bir hata oluştu: $error');
+                               }
                             },
                           );
                         }
@@ -363,46 +353,8 @@ class _LeavePageState extends State<LeavePage> {
           }
         },
       ),
-
-      //////////////////////////person_add_alt_1
-
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.add_task_outlined),
-              onPressed: () {
-                Navigator.pushNamed(context, '/adminPage');
-              },
-            ),
-            label: 'İzinler',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.person_add_alt_1),
-              onPressed: () {
-                Navigator.pushNamed(context, '/usersActivation');
-              },
-            ),
-            label: 'Kullanıcı Aktivasyon',
-          ),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              icon: Icon(Icons.message),
-              onPressed: () {
-                Navigator.pushNamed(context, '/chatDm');
-              },
-            ),
-            label: 'Mesaj ',
-          ),
-        ],
-        //selectedItemColor: Colors.blue,
-      ),
     );
   }
-
-//popUpDialog(BuildContext context) {}
 }
 
-///////////////////////////////////////////////////
 

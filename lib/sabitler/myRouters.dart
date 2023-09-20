@@ -1,15 +1,15 @@
-import 'package:enelsis_app/sayfalar/group_page.dart';
-import 'package:enelsis_app/sayfalar/home_page.dart';
-import 'package:enelsis_app/sayfalar/leave_page.dart';
-import 'package:enelsis_app/sayfalar/profile_page.dart';
-import 'package:enelsis_app/sayfalar/rootAdmin_Login.dart';
+import 'package:enelsis_app/pages/group_page.dart';
+import 'package:enelsis_app/pages/home_page.dart';
+import 'package:enelsis_app/pages/leave_page.dart';
+import 'package:enelsis_app/pages/profile_page.dart';
+import 'package:enelsis_app/pages/rootAdmin_Login.dart';
 import 'package:flutter/material.dart';
-import '../sayfalar/admin_page.dart';
-import '../sayfalar/aktivationLogin.dart';
-import '../sayfalar/usersLeaveRequest_page.dart';
-import '../sayfalar/rootAdmin_page.dart';
-import '../sayfalar/sign_up.dart';
-import '../sayfalar/usersActivation_page.dart';
+import '../pages/admin_page.dart';
+import '../pages/aktivationLogin.dart';
+import '../pages/usersLeaveRequest_page.dart';
+import '../pages/rootAdmin_page.dart';
+import '../pages/sign_up.dart';
+import '../pages/usersActivation_page.dart';
 import 'activationForm.dart';
 
 class MyRoutes {
@@ -38,16 +38,6 @@ class MyRoutes {
 
       case '/leavePage':
         return MaterialPageRoute(builder: (context) => LeavePage());
-      // case '/chatPage':
-      //   var d2 = setting.arguments as String;
-      //   return MaterialPageRoute(builder: (context) => ChatScreen(d2));
-      // case '/chatDm':
-      //   return MaterialPageRoute(builder: (context) => ChatDm());
-
-      // case '/conversationPage':
-      //   return MaterialPageRoute(
-      //       builder: (context) =>
-      //           ConversationPage(userId: userId, conversationId: doc.id));
 
       case '/usersActivation':
         return MaterialPageRoute(builder: (context) => UsersActivation());
@@ -63,10 +53,8 @@ class MyRoutes {
       case '/rootAdminPage':
         return MaterialPageRoute(builder: (context) => RootAdminPage());
 
-      // case '/aktivationLogin':
-      //   return MaterialPageRoute(builder: (context) => AktivationLogin());
 
-      // break;
+     // break;
       default:
     }
 

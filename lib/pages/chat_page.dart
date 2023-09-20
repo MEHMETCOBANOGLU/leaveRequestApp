@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
-import 'package:enelsis_app/sayfalar/group_info.dart';
+import 'package:enelsis_app/pages/group_info.dart';
+import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/message_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:enelsis_app/sayfalar/home_page.dart';
+import 'package:enelsis_app/pages/home_page.dart';
+import 'package:flutter/scheduler.dart';
 
 class ChatPage extends StatefulWidget {
   final String groupId;
@@ -25,6 +27,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   Stream<QuerySnapshot>? chats;
   TextEditingController messageController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
   String admin = "";
   String rool = "";
 
@@ -32,6 +35,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     getChatandAdmin();
     gettingUserData();
+    _scrollController = ScrollController();
     super.initState();
   }
 
@@ -39,11 +43,13 @@ class _ChatPageState extends State<ChatPage> {
     DatabaseService().getChats(widget.groupId).then((val) {
       setState(() {
         chats = val;
+        
       });
     });
     DatabaseService().getGroupAdmin(widget.groupId).then((val) {
       setState(() {
         admin = val;
+        scrollfunc();
       });
     });
   }
@@ -59,6 +65,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -91,17 +98,23 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Stack(
         children: <Widget>[
+         
           // chat messages here
-          chatMessages(),
+          Container(
+            
+           padding: const EdgeInsets.only(bottom: 80), 
+           child: chatMessages(),
+          ),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Color.fromARGB(255, 236, 222, 249),
+                borderRadius: BorderRadius.circular(30),
+                color: renk(TextBox)
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              margin: const EdgeInsets.all(5),
               width: MediaQuery.of(context).size.width,
               child: Row(children: [
                 Expanded(
@@ -149,6 +162,7 @@ class _ChatPageState extends State<ChatPage> {
       builder: (context, AsyncSnapshot snapshot) {
         return snapshot.hasData
             ? ListView.builder(
+                controller: _scrollController,
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
@@ -175,6 +189,17 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         messageController.clear();
       });
+                // Yeni mesajı gönderdikten sonra sayfayı en altına kaydırın
+      scrollfunc();
+
+
     }
   }
+    scrollfunc(){    _scrollController.animateTo(
+      _scrollController.position.extentTotal,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );}
+
 }
+
