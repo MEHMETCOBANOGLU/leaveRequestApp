@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/sabitler/leaveCardUsers.dart';
-import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,41 +37,6 @@ class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
           style: TextStyle(
               color: Colors.white, fontSize: 27, fontWeight: FontWeight.bold),
         ),
-        // title: StreamBuilder<DocumentSnapshot>(
-        //   stream:
-        //       _firestore.collection('users').doc(_currentUser!.uid).snapshots(),
-        //   builder:
-        //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return CircularProgressIndicator();
-        //     }
-
-        //     if (snapshot.hasError) {
-        //       return Text(
-        //           'Veri yüklenirken bir hata oluştu: ${snapshot.error}');
-        //     }
-
-        //     // final userData =
-        //     //     snapshot.data?.data() as Map<String, dynamic>? ?? {};
-        //     // final String name = userData['name'] as String? ?? '';
-        //     // final String department = userData['department'] as String? ?? '';
-
-        //     return Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       children: [
-        //         Center(
-        //             child: Text("İzinler",
-        //                 style: TextStyle(
-        //                   fontSize: 25,
-        //                   color: Colors.white,
-        //                   fontFamily: "Great Vibes",
-        //                   fontStyle: FontStyle.italic,
-        //                 ))),
-        //         // Text(department, style: TextStyle(fontSize: 14)),
-        //       ],
-        //     );
-        //   },
-        // ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 1),
@@ -82,12 +46,6 @@ class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
               child: Image.asset("assets/enelsis_logo2.png"),
             ),
           ),
-          // IconButton(
-          //   icon: Icon(Icons.logout),
-          //   onPressed: () {
-          //     // Çıkış işlemi burada yapılabilir
-          //   },
-          // ),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -179,49 +137,3 @@ class _UsersLeaveRequestState extends State<UsersLeaveRequest> {
 
 
 
-
-
-
-
-      //       body: Column(
-      //   children: [
-      //     const Card(
-      //       margin: EdgeInsets.all(10),
-      //       color: Colors.white,
-      //       child: SizedBox(height: 100, width: 100),
-      //       shape: StadiumBorder(),
-      //     ),
-      //     Card(
-      //       color: Theme.of(context).colorScheme.error,
-      //       child: const SizedBox(height: 100, width: 100),
-      //     )
-      //   ],
-      // ),
-      /////////////////////////////////////
-
-      // body: StreamBuilder<QuerySnapshot>(
-      //     stream: _authService.getUsers(), // Veri akışı
-      //     // stream: _firestore
-      //     //     .collection("users")
-      //     //     .doc(_currentUser!.uid)
-      //     //     .collection('leaveRequests')
-      //     //     .snapshots(),
-      //     builder: (context, snapshot) {
-      //       return !snapshot.hasData
-      //           ? CircularProgressIndicator()
-      //           : ListView.builder(
-      //               itemCount: snapshot.data!.docs.length,
-      //               itemBuilder: (context, index) {
-      //                 DocumentSnapshot myuser = snapshot.data!.docs[index];
-
-      //                 return Padding(
-      //                   padding: const EdgeInsets.all(8.0),
-      //                   child: Column(
-      //                     children: [
-      //                       Text("${myuser["izinTipi"]}"),
-      //                       Container(),
-      //                     ],
-      //                   ),
-      //                 );
-      //               });
-      //     }),

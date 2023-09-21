@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/pages/aktivationLogin.dart';
-import 'package:enelsis_app/pages/group_page.dart';
-import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
@@ -58,8 +55,6 @@ class _LeavePageState extends State<LeavePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),

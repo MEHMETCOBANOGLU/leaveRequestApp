@@ -1,5 +1,4 @@
 import 'package:enelsis_app/helper/helper_function.dart';
-import 'package:enelsis_app/pages/profile_page.dart';
 import 'package:enelsis_app/pages/search_page.dart';
 import 'package:enelsis_app/service/auth_service.dart';
 import 'package:enelsis_app/service/database_service.dart';

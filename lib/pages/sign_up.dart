@@ -155,38 +155,12 @@ class _SignUpState extends State<SignUp> {
                         decoration: tema.inputDec(
                             "Ad-Soyad Giriniz",
                             Icons
-                                .person_add_alt), // burda tema.darttaki input giris alani yer aliyor
+                                .person_add_alt), 
                         style: GoogleFonts.quicksand(
                           color: renk(metin_renk),
                         ),
                       ),
                     ),
-                    // Container(
-                    //   decoration:
-                    //       tema.inputBoxDec(), // temadan gelen box decaration
-                    //   margin: EdgeInsets.only(
-                    //       left: 10, right: 10, top: 10, bottom: 10),
-                    //   padding: EdgeInsets.only(
-                    //       left: 15, right: 15, top: 5, bottom: 5),
-                    //   child: TextFormField(
-                    //     validator: (value) {
-                    //       if (value!.isEmpty) {
-                    //         return "bilgileri eksiksiz doldurunuz";
-                    //       } else {}
-                    //       return null;
-                    //     },
-                    //     onSaved: (value) {
-                    //       department = value!;
-                    //     },
-                    //     decoration: tema.inputDec(
-                    //         "Departmanınızı Giriniz",
-                    //         Icons
-                    //             .logo_dev_sharp), // burda tema.darttaki input giris alani yer aliyor
-                    //     style: GoogleFonts.quicksand(
-                    //       color: renk(metin_renk),
-                    //     ),
-                    //   ),
-                    // ),
                     SizedBox(
                       height: 20,
                     ),
@@ -245,39 +219,8 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: InkWell(
-                        //////////////////////////////////////////////////////////////////////
                         onTap: () async {
                           SignUP();
-                          //   try {
-                          //     var UserResult = await firebaseAuth
-                          //         .createUserWithEmailAndPassword(
-                          //       email: email,
-                          //       password: password,
-                          //     );
-                          //     formkey.currentState!.reset();
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       SnackBar(
-                          //         content: Text(
-                          //             "Kayıt yapıldı, giriş sayfasına yönlendiriliyorsunuz"),
-                          //       ),
-                          //     );
-                          //     //  print(UserResult.user!.uid);
-                          //     //print(UserResult.user!.email);
-                          //     Navigator.pushReplacementNamed(context, "/");
-                          //     saveUserDataToFirestore(
-                          //       UserResult.user!.uid,
-                          //       email,
-                          //       password,
-                          //       name,
-                          //       department,
-                          //       rool,
-                          //     );
-                          //   } catch (e) {
-                          //     print(e.toString());
-                          //   }
-                          // } else {
-                          //   // Validation failed
-                          // }
                         },
                         child: Center(
                           child: Text(

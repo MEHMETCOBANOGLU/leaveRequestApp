@@ -4,11 +4,8 @@ import 'package:enelsis_app/model/pushnotification_model.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/notification_badge.dart';
 import 'package:enelsis_app/sabitler/theme.dart';
-import 'package:enelsis_app/pages/sign_up.dart';
 import 'package:enelsis_app/service/auth_service.dart';
-import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/widgets.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,11 +20,9 @@ class AktivationLogin extends StatefulWidget {
   @override
   State<AktivationLogin> createState() => _AktivationLoginState();
 }
-
 class _AktivationLoginState extends State<AktivationLogin> {
   Tema tema = Tema();
-  bool sifre_gozukme = false;
-
+  bool sifre_gozukme = true;
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
   bool userIsAdmin = false; 
@@ -123,8 +118,6 @@ class _AktivationLoginState extends State<AktivationLogin> {
           _totalNotificationCounter++;
           _notificationInfo = notification;
         });
-
-
     });
     // normal notification
     registerNotification();
@@ -133,9 +126,6 @@ class _AktivationLoginState extends State<AktivationLogin> {
     _totalNotificationCounter = 0;
     super.initState();
   }
-
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -181,9 +171,6 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                 style: GoogleFonts.quicksand(
                                   color: renk(metin_renk),
                                 ),
-                                //    onSaved: (value) {
-                                //    name = value!;
-                                //  },
                                 validator: (val) {
                                   return RegExp(
                                               r"^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){0,18}[a-zA-Z0-9]$")
@@ -231,7 +218,7 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                         });
                                       },
                                       icon: Icon(sifre_gozukme
-                                          ? Icons.close
+                                          ? Icons.remove_red_eye_outlined
                                           : Icons.remove_red_eye),
                                       color: renk(metin_renk)),
                                 ],
@@ -241,10 +228,8 @@ class _AktivationLoginState extends State<AktivationLogin> {
                               onTap: () async {
                                 final String username =
                                     usernameController.text.trim();
-                                    print(username);
                                 final String password =
                                     passwordController.text.trim();
-
                                 if (formkey.currentState!.validate()) {
                                   formkey.currentState!.save();
                                   if (username.isEmpty) {
@@ -270,25 +255,24 @@ class _AktivationLoginState extends State<AktivationLogin> {
                                            await HelperFunctions.saveUserNameSF(name);
                                            await HelperFunctions.saveUserDepartmentSF(department);
                                            await HelperFunctions.saveUserRoolDepartmentSF(rool);
-
-                                      try {
-                                        final userResult = await firebaseAuth
-                                          .signInWithEmailAndPassword(
-                                          email: email,
-                                          password: password,
-                                        );
-                                        print(userResult.user!.uid);
-                                      } catch (e) {
-                                        print(e.toString());
-                                      }
-                                      if (rool == "Admin") {
-                                        Navigator.pushReplacementNamed(context, "/adminPage");
+                                     
+                                           try {
+                                             final userResult = await firebaseAuth.signInWithEmailAndPassword(
+                                               email: email,
+                                               password: password,
+                                             );
+                                             print(userResult.user!.uid);
+                                             if (rool == "Admin") {
+                                               Navigator.pushReplacementNamed(context, "/adminPage");
+                                             } else {
+                                               Navigator.pushReplacementNamed(context, "/homePage");
+                                             }
+                                           } catch (e) {
+                                               showSnackbar(context, Colors.red, e.toString());
+                                           } 
                                       } else {
-                                        Navigator.pushReplacementNamed(context, "/homePage");
+                                        showSnackbar(context, Colors.red, 'Kullanıcı bulunamadı');
                                       }
-                                    } else {
-                                      print('Kullanıcı bulunamadı');
-                                    }
                                     }
                                   }
                                 }

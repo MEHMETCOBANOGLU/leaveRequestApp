@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/pages/aktivationLogin.dart';
@@ -15,9 +14,7 @@ class adminPage extends StatefulWidget {
   @override
   State<adminPage> createState() => _adminPageState();
 }
-
 class _adminPageState extends State<adminPage> {
-  final _firestore = FirebaseFirestore.instance;
   String username = "";
   String email = "";
   String department = "";
@@ -28,6 +25,7 @@ class _adminPageState extends State<adminPage> {
   int rejectLeaveCount = 0;
   int zamanAraligindakiLeaveSayisi = 0;
   int usernameCount = 0;
+  
   late List<GDPData> _chartData;
   late TooltipBehavior _tooltipBehavior;
 
@@ -47,53 +45,40 @@ class _adminPageState extends State<adminPage> {
   }
 
   getDatabaseInfo()  {
-
-      DatabaseService().getUsersCount().then((val) {
+    DatabaseService().getUsersCount().then((val) {
       setState(() {
         userCount = val;
         _chartData= getChartData();
-        print('userCount $userCount');
       });
     });
-
      DatabaseService().getLeaveCount().then((val) {
       setState(() {
         leaveCount = val;
         _chartData= getChartData();
-        print('leaveCount $leaveCount');
       });
     });
-    
-  DatabaseService().getApprovedLeaveCount().then((val) {
+    DatabaseService().getApprovedLeaveCount().then((val) {
       setState(() {
         approvedLeaveCount = val;
         _chartData= getChartData();
-        print('approvedLeaveCount $approvedLeaveCount');
       });
     });
-
-         DatabaseService().getRejectLeaveCount().then((val) {
+    DatabaseService().getRejectLeaveCount().then((val) {
       setState(() {
         rejectLeaveCount = val;
         _chartData= getChartData();
-        print('rejectLeaveCount $rejectLeaveCount');
       });
     });
-    
-
     DatabaseService().getLeaveRequestsInTimeRange().then((val) {
       setState(() {
         zamanAraligindakiLeaveSayisi = val;
         _chartData= getChartData();
-        print('zamanAraligindakiLeaveSayisi $zamanAraligindakiLeaveSayisi');
       });
     });
-
-        DatabaseService().getUsernameCount().then((val) {
+    DatabaseService().getUsernameCount().then((val) {
       setState(() {
         usernameCount = val;
         _chartData= getChartData();
-        print('usernameCount $usernameCount');
       });
     });
   }
@@ -119,8 +104,6 @@ class _adminPageState extends State<adminPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -221,7 +204,6 @@ class _adminPageState extends State<adminPage> {
               style: TextStyle(color: Colors.black),
             ),
           ),
-
           ListTile(
             onTap: () {
               Navigator.pushReplacementNamed(context, '/groupPage');
@@ -272,10 +254,10 @@ class _adminPageState extends State<adminPage> {
                         ),
                       ],
                     );
-                  });
-            },
+                });
+              },
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             leading: const Icon(Icons.exit_to_app),
             title: const Text(
               "Çıkış Yap",
@@ -287,7 +269,7 @@ class _adminPageState extends State<adminPage> {
 
       body: SfCircularChart(
         title: ChartTitle(text: 'PERSONEL DURUM GRAFİĞİ', textStyle: TextStyle(
-              color: renk(laci), fontWeight: FontWeight.bold, fontSize: 27),),
+        color: renk(laci), fontWeight: FontWeight.bold, fontSize: 27),),
         legend:  Legend(isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
         tooltipBehavior: _tooltipBehavior,
         series: <CircularSeries>[
@@ -311,13 +293,10 @@ class _adminPageState extends State<adminPage> {
     GDPData("Aktivasyon İstekleri", usernameCount),
     GDPData("İzinli Personel", zamanAraligindakiLeaveSayisi),
     GDPData("Personel", userCount), 
-
-
     ];
     return chartData;
    }
 }
-
 class GDPData{
   GDPData(this.continent, this.gdp);
   final String continent;

@@ -472,13 +472,6 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    Timestamp baslangicTarihiTimestamp =
-        Timestamp.fromDate(selectedBaslangicTarihi!);
-    Timestamp bitisTarihiTimestamp = Timestamp.fromDate(selectedBitisTarihi!);
-
-    //String izinAlmaNedeni =  izinAlmaNedeni; // TextFormField'dan alınan değer
-
-    // Firestore'a izin talebi verilerini kaydet
     try {
       DocumentReference izinTalebiRef = await _firestore
           .collection('users')

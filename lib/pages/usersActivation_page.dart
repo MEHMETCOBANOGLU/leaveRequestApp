@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/activationCard.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
-import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,8 +37,6 @@ class _UsersActivationState extends State<UsersActivation> {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),

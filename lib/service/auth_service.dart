@@ -53,23 +53,6 @@ class AuthService {
       return null;
     }
   }
-  ////////////
-  //  
-  // Future signIn() async {
-  //   try {
-  //     await HelperFunctions.saveUserLoggedInStatus(true);
-  //     await HelperFunctions.saveUserEmailSF(email);
-  //     await HelperFunctions.saveUserNameSF(name);
-  //     await HelperFunctions.saveUserDepartmentSF(department);
-  //     await HelperFunctions.saveUserRoolDepartmentSF(rool);
-  //     await firebaseAuth.signInWithEmailAndPassword(String email, String password);
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
-  ///////////////////////////////////////
-  ///firebaseAuth
-
   Stream<User?> get authStateChanges => firebaseAuth.idTokenChanges();
 
   final _firestore = FirebaseFirestore.instance;

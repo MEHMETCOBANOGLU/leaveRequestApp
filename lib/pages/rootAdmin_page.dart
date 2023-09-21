@@ -20,8 +20,6 @@ class _RootAdminPageState extends State<RootAdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: renk(laci),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enelsis_app/helper/helper_function.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/sabitler/theme.dart';
-import 'package:enelsis_app/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,7 +28,6 @@ class _ActivationFormState extends State<ActivationForm> {
   final formkey = GlobalKey<FormState>();
   final firebaseAuth = FirebaseAuth.instance;
 
-  final _firestore = FirebaseFirestore.instance;
   void saveActivationDataToFirestore(
       String nickName, String password, String department) async {
     try {
@@ -248,8 +246,7 @@ class _ActivationFormState extends State<ActivationForm> {
                   child: Center(
                     child: TextButton(
                       onPressed: () =>
-                        Navigator.pushReplacementNamed(
-                           context, "/aktivationLogin"),
+                        Navigator.pop(context),
                       child: Text(
                         "Bir önceki sayfaya geri dön",
                       ),

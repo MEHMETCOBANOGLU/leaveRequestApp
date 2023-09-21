@@ -1,4 +1,3 @@
-import 'package:enelsis_app/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {

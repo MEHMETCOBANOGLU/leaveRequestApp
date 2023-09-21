@@ -66,8 +66,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/enelsis_logo2.png
-    - assets/enelsis_logo3.jpg
-    - assets/Enelsis-png.png
+
 
 # The following line ensures that the Material Icons font is
 # included with your application, so that you can use the icons in

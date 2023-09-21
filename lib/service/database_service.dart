@@ -118,26 +118,8 @@ class DatabaseService {
     });
   }
 
-  ////////////////////
-  // users daki droups belgesine grubu ekleme:
-  Future GroupJoin(String groupId, String username, String groupName) async {
-    // doc reference
-    DocumentReference userDocumentReference = userCollection.doc(uid);
-    DocumentReference groupDocumentReference = groupCollection.doc(groupId);
 
-    DocumentSnapshot documentSnapshot = await userDocumentReference.get();
-    List<dynamic> groups = await documentSnapshot['groups'];
 
-    // if user has our groups -> then remove then or also in other part re join
-
-    await userDocumentReference.update({
-      "groups": FieldValue.arrayUnion(["${groupId}_$groupName"])
-    });
-    await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${uid}_$username"])
-    });
-  }
-  /////////////////////
 
   // getting the chats
   getChats(String groupId) async {
@@ -335,8 +317,7 @@ Future<int> getRejectLeaveCount() async {
   }
 
 
-  // hey chatGpt SANA BIR SORUM OLACAK. Firestore'daki "users" koleksiyonu altındaki tüm dokümantasyonların içinde username belgesi var mi diye
-  // kontrol etmeni istiyorum eger yoksa sayisini elde etmek istiyorum
+
 
     // Kullanıcı dokümantasyonlarının içinde "username" alanı yok mu ?kullanici aktivasyon sayisini belirtiyor bu
   Future<int> getUsernameCount() async {

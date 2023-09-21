@@ -4,10 +4,8 @@ import 'package:enelsis_app/pages/group_info.dart';
 import 'package:enelsis_app/sabitler/ext.dart';
 import 'package:enelsis_app/service/database_service.dart';
 import 'package:enelsis_app/widgets/message_tile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:enelsis_app/pages/home_page.dart';
-import 'package:flutter/scheduler.dart';
+
 
 class ChatPage extends StatefulWidget {
   final String groupId;
