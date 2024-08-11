@@ -14,7 +14,20 @@ The leave tracking application we are developing is designed to streamline the l
 
 - **User Activation:** Admins can assign usernames and passwords to registered users through the user activation page, providing them with the necessary credentials to access the system.
 
+---
+![image](https://github.com/user-attachments/assets/5e03e893-ac9c-4351-a538-b9f4f348820c)
 
+When personnel logs in, the leave request page [see Appendix 1] will appear. By clicking the leave button at the bottom right, the leave status page [see Appendix 2] will open, where they can view their submitted leave requests and check the approval status.
+
+![image](https://github.com/user-attachments/assets/a1201796-9f59-438d-9ef4-235db1142a88)
+---
+When an admin logs in, they will be greeted by a page displaying the leave requests [see Appendix 3]. From this page, the admin can review the details of the leave requests, approve or reject them, send a message [see Appendix 4], or delete the leave request.
+
+![image](https://github.com/user-attachments/assets/5e339886-2c26-49ef-8d2a-f5de82cefca7)
+---
+When the user activation option is selected from the bottom bar, the user activation page [see Appendix 5] will appear. On this page, the admin can view the information of the registered users and, if deemed appropriate, activate the user by clicking the corresponding button, which will redirect them to the activation page [see Appendix 6].
+
+![image](https://github.com/user-attachments/assets/f31b1972-f9de-46bf-b807-fa22730439ca)
 
 ## 🛠️ Installation Steps
 
