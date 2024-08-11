@@ -29,6 +29,27 @@ When the user activation option is selected from the bottom bar, the user activa
 
 ![image](https://github.com/user-attachments/assets/f31b1972-f9de-46bf-b807-fa22730439ca)
 
+---
+
+![image](https://github.com/user-attachments/assets/86bbf5a1-29e2-480e-9a82-a621490bd3b7)
+![image](https://github.com/user-attachments/assets/7bae5aef-5330-437d-8c8d-8e907e4064d8)
+![image](https://github.com/user-attachments/assets/1b733a59-7747-451e-aa69-cc499ee074da) 
+![image](https://github.com/user-attachments/assets/5fb00162-d63b-4570-95d9-dbacebdf9211)
+![image](https://github.com/user-attachments/assets/4a1f1b62-29f1-4f0e-92fb-d9bb7e33eb6d)
+![image](https://github.com/user-attachments/assets/4affd2e1-4200-4e78-9bb0-c5ff48024a1b)
+![image](https://github.com/user-attachments/assets/64c62c76-7939-4458-8b0f-997e83e57a06)
+![image](https://github.com/user-attachments/assets/12c60b17-aaf6-497e-8309-7e691342a2fe)
+![image](https://github.com/user-attachments/assets/582d22eb-b5b8-4b15-a385-725f6eaf02d7)
+![image](https://github.com/user-attachments/assets/4bcff8d3-2d19-42e8-b1b7-413d357d0616)
+![image](https://github.com/user-attachments/assets/125dcbd3-9537-44e5-bc1a-8eedf5cc492f)
+![image](https://github.com/user-attachments/assets/9f30a77e-434d-42f9-853b-4f30dfd99447)
+![image](https://github.com/user-attachments/assets/ce17c27d-415b-4105-81ab-638ddcda60f4)
+![image](https://github.com/user-attachments/assets/5cf1e5b9-47bf-49e7-8a23-974ded76ce1f)
+
+
+
+---
+
 ## 🛠️ Installation Steps
 
 
