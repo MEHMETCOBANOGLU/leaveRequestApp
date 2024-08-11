@@ -4,12 +4,13 @@
 1. Open Terminal and Clone the Repo
 
 ```bash
-  git clone https://github.com/MEHMETCOBANOGLU/smart-home-app-master.git
+  git clone https://github.com/MEHMETCOBANOGLU/leaveRequestApp.git
 ```
  2. Cd Over 
  
 ```bash
-   cd smart-home-app-master
+   cd leaveRequestAppleaveRequestApp
+
 ```
  3. Run Pub
 ```
